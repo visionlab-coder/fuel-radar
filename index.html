@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>기름따라 졸졸졸 - Tactical Fuel HUD V5.0</title>
+  <title>기름따라 졸졸졸 - Tactical Fuel HUD V6.0</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -25,17 +25,17 @@
     <header class="hud-header">
       <div class="header-main">
         <div class="header-logo-group">
-          <span class="hud-label">SYSTEM_STATUS: ACTIVE</span>
-          <h1 class="hud-title">REAL-TIME FUEL PRICE CENTER <span class="v-badge">V5.0</span></h1>
+          <span class="hud-label">SYSTEM_STATUS: OPERATIONAL</span>
+          <h1 class="hud-title">REAL-TIME FUEL PRICE CENTER <span class="v-badge">V6.0</span></h1>
         </div>
         <div class="header-location">
           <span class="loc-icon">🛰️</span>
-          <span id="locationText" class="loc-val">SCANNING_POSITION...</span>
+          <span id="locationText" class="loc-val">GPS_SYNC_WAITING...</span>
         </div>
       </div>
       <div class="header-actions">
-        <button class="hud-btn-icon" id="notifBtn">NOTIF</button>
         <button class="hud-btn-icon" id="searchBtn">SEARCH</button>
+        <button class="hud-btn-icon" id="notifBtn">NOTIF</button>
       </div>
     </header>
 
@@ -53,7 +53,7 @@
             </div>
             <div class="radar-meta">
               <div class="meta-row">
-                <span class="meta-label">TARGET_SCAN:</span>
+                <span class="meta-label">DETECTIONS:</span>
                 <span id="targetCount" class="meta-val">0 UNITS</span>
               </div>
               <p id="radarStatus" class="radar-status-msg">INITIALIZING_SCANNER...</p>
@@ -63,13 +63,13 @@
           <div class="quick-report-module">
             <div class="report-header">
               <span class="report-badge">QUICK REPORT</span>
-              <p class="report-desc">이상 가격 발견 시 즉시 제보하세요.</p>
+              <p class="report-desc">허위 가격 제보 시 포상을 드립니다.</p>
             </div>
-            <button id="reportBtn" class="report-cta">
-              <span class="cta-icon">⚠️</span>
-              <span>얌채 주유소 신고하기</span>
+            <button id="reportBtn" class="report-high-cta">
+              <span class="cta-icon">🚨</span>
+              <span>얌채 주유소 신고</span>
             </button>
-            <button class="report-sub-link">REPORT FORM OPEN</button>
+            <button class="report-link" onclick="state.activeTab='community'; updateUI();">상세 제보 게시판</button>
           </div>
         </section>
 
@@ -78,7 +78,7 @@
           <div class="trend-card">
             <div class="card-header">
               <span class="card-icon">📈</span>
-              <h3 class="card-title">14-DAY PRICE TREND</h3>
+              <h3 class="card-title">14-DAY TREND</h3>
             </div>
             <div id="trendHistory" class="trend-history-list">
               <!-- Dynamic trend items -->
@@ -88,7 +88,7 @@
           <div class="calc-card">
             <div class="card-header">
               <span class="card-icon">🧮</span>
-              <h3 class="card-title">SMART SAVINGS CALC</h3>
+              <h3 class="card-title">SAVINGS CALC</h3>
             </div>
             <div class="calc-body">
               <div class="calc-row">
@@ -96,7 +96,7 @@
                 <input type="number" value="40" id="calcFuel" class="hud-input">
               </div>
               <div class="calc-result">
-                <span class="res-label">EXPECTED SAVINGS</span>
+                <span class="res-label">EXP. SAVINGS</span>
                 <span id="resAmount" class="res-val">+18,500 KRW</span>
               </div>
             </div>
@@ -106,31 +106,72 @@
         <!-- Tactical Rankings List -->
         <section class="hud-rankings">
           <div class="section-title-row">
-            <h3 class="section-title">TACTICAL RANKINGS</h3>
-            <div class="list-filters">
-              <select id="fuelSelect" class="hud-select">
+            <h3 class="section-title">TACTICAL LIST</h3>
+            <div class="list-filters-v6">
+              <select id="fuelSelect" class="hud-select-v6">
                 <option value="gasoline">휘발유</option>
                 <option value="diesel">경유</option>
               </select>
-              <button id="refreshBtn" class="hud-refresh-btn">REFRESH</button>
+              <select id="radiusSelect" class="hud-select-v6">
+                <option value="1">1KM</option>
+                <option value="3" selected>3KM</option>
+                <option value="5">5KM</option>
+              </select>
             </div>
           </div>
-          <div id="stationList" class="station-grid-v5">
+
+          <!-- Tactical Filter Icons -->
+          <div class="filter-icons-row">
+            <button class="filter-chip" data-filter="wash">🧼 세차장</button>
+            <button class="filter-chip" data-filter="mart">🏪 편의점</button>
+            <button class="filter-chip" data-filter="repair">🔧 정비소</button>
+            <button id="refreshBtn" class="filter-refresh-chip">🔄 REFRESH</button>
+          </div>
+
+          <div id="stationList" class="station-grid-v6">
             <!-- Tactical List Items -->
           </div>
         </section>
       </div>
 
-      <!-- Other Tabs Placeholder -->
-      <div id="mapTab" class="tab-pane">...</div>
-      <div id="communityTab" class="tab-pane">...</div>
+      <!-- MAP TAB -->
+      <div id="mapTab" class="tab-pane">
+        <section class="hud-full-map-card">
+          <div id="fullMap" style="width:100%; height:80vh;"></div>
+        </section>
+      </div>
+
+      <!-- COMMUNITY TAB -->
+      <div id="communityTab" class="tab-pane">
+        <section class="community-header">
+          <h2 class="hud-title">커뮤니티 자유게시판</h2>
+          <button class="report-high-cta" id="writePostBtn" style="padding: 0.5rem 1rem; font-size: 0.8rem;">📝
+            글쓰기</button>
+        </section>
+        <div id="forumList" class="forum-grid-v6">
+          <!-- Dynamic forum items -->
+        </div>
+      </div>
+
+      <!-- MORE TAB -->
+      <div id="moreTab" class="tab-pane">
+        <section class="sys-info-card">
+          <h2 class="hud-title">SYSTEM INFO</h2>
+          <div class="sys-stats">
+            <div class="sys-row"><span>VERSION</span><span>V6.0_STABLE</span></div>
+            <div class="sys-row"><span>ENGINE</span><span>TACTICAL_RADAR_V2</span></div>
+            <div class="sys-row"><span>BUILD</span><span>2026-03-11T21:49</span></div>
+          </div>
+        </section>
+      </div>
+
     </div>
 
     <!-- Tactical Bottom Navigation -->
     <nav class="hud-nav">
       <button class="nav-btn active" data-tab="home">HUD</button>
       <button class="nav-btn" data-tab="map">MAP</button>
-      <button class="nav-btn" data-tab="community">LOGS</button>
+      <button class="nav-btn" data-tab="community">COMM</button>
       <button class="nav-btn" data-tab="more">SYS</button>
     </nav>
   </main>
