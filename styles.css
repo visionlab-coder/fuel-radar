@@ -86,54 +86,31 @@ body {
   overflow: hidden;
 }
 
-/* Radar Stack (v4 Specific) */
+/* Radar Stack (v4.1 Canvas) */
 .radar-stack {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), transparent);
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.05), transparent);
 }
 
-.radar-scanner-v4 {
+.radar-wrap {
   position: relative;
-  width: 100px;
-  height: 100px;
-  border: 4px solid rgba(255, 255, 255, 0.05);
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 150, 0.1);
+  overflow: hidden;
+  background: #000;
+  border: 2px solid rgba(0, 255, 150, 0.3);
 }
 
-.radar-sweep {
+canvas {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 50%;
-  height: 2px;
-  background: linear-gradient(to right, transparent, var(--neon-cyan));
-  transform-origin: 0 50%;
-  animation: sweep 3s linear infinite;
-}
-
-@keyframes sweep {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.radar-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  background: var(--neon-cyan);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px var(--neon-cyan);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .card-title-v4 {
@@ -277,12 +254,12 @@ body {
   cursor: pointer;
 }
 
-/* Action Cards */
+/* Action Cards & Utilities */
 .action-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  padding: 1.5rem 1rem;
+  padding: 0 1rem 1rem;
 }
 
 .action-card {
@@ -297,6 +274,38 @@ body {
   color: #fff;
   font-weight: 800;
   font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.action-card:active {
+  transform: scale(0.95);
+}
+
+.action-icon {
+  font-size: 1.5rem;
+}
+
+/* More Item */
+.more-item {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border-v4);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.more-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Radar status text */
+.radar-scan-status {
+  font-size: 0.8rem;
+  color: rgba(0, 255, 150, 0.8);
+  margin: 0.5rem 0 0 0;
+  font-weight: 600;
 }
 
 /* Bottom Nav */

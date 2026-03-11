@@ -1,40 +1,38 @@
 <!-- Premium Background Layers -->
 <div class="bg-shape bg-a"></div>
 <div class="bg-shape bg-b"></div>
-<div class="bg-noise"></div>
 
 <main class="app">
-  <!-- Ultra-Premium Header (As per image) -->
+  <!-- Ultra-Premium Header -->
   <header class="app-header">
     <div class="header-left">
       <h1 class="app-logo">기름따라 <span class="accent">졸졸졸</span> <span class="emoji">⛽</span></h1>
     </div>
     <div class="header-right">
-      <button class="icon-btn" id="notifBtn"><span class="icon">🔔</span></button>
-      <button class="icon-btn" id="searchBtn"><span class="icon">🔍</span></button>
+      <button class="icon-btn" id="notifBtn">🔔</button>
+      <button class="icon-btn" id="searchBtn">🔍</button>
     </div>
   </header>
 
-  <!-- Content Sections (Tab Based) -->
+  <!-- Tab Content -->
   <div id="tabContent">
-    <!-- HOME TAB: The Main UI from Image -->
+    <!-- HOME TAB -->
     <div id="homeTab" class="tab-pane active">
 
-      <!-- Radar Scan Card -->
+      <!-- Canvas Radar Card -->
       <section class="glass-card radar-stack">
         <div class="radar-visual">
-          <div class="radar-scanner-v4">
-            <div id="radarBlips" class="radar-blips"></div>
-            <div class="radar-sweep"></div>
-            <div class="radar-center"></div>
+          <div class="radar-wrap">
+            <canvas id="radarCanvas" width="160" height="160"></canvas>
           </div>
         </div>
         <div class="radar-info">
-          <h2 class="card-title-v4">최저가 주유소 스캔 중</h2>
+          <h2 class="card-title-v4">최저가 주유소<br><span class="accent">Radar</span> 스캔 중</h2>
           <div class="location-row">
-            <span class="loc-text">현재 위치: <span id="locationText" class="val">서울 강남구</span></span>
+            <span>현재 위치: <span id="locationText" class="val">연결 중...</span></span>
             <button id="refreshBtn" class="mini-btn">Refresh</button>
           </div>
+          <p id="radarStatus" class="radar-scan-status">스캐너 대기 중...</p>
         </div>
       </section>
 
@@ -42,14 +40,13 @@
       <section class="glass-card map-stack">
         <div id="miniMap" class="map-v4"></div>
         <div class="map-overlay">
-          <span class="map-brand">mapbox</span>
+          <span class="map-brand">● mapbox</span>
         </div>
       </section>
 
-      <!-- Station List Section -->
+      <!-- Station List -->
       <section class="list-container">
         <h3 class="list-header-v4">내 주변 주유소 목록</h3>
-
         <div class="filter-bar-v4">
           <select id="fuelSelect" class="v4-select">
             <option value="gasoline">휘발유</option>
@@ -61,41 +58,57 @@
             <option value="5">5km</option>
           </select>
         </div>
-
-        <div id="stationList" class="v4-station-list">
-          <!-- Dynamic Items with Image Styling -->
-        </div>
+        <div id="stationList" class="v4-station-list"></div>
       </section>
 
-      <!-- New Features Action Bar -->
+      <!-- Action Grid -->
       <section class="action-grid">
         <button class="action-card report" id="reportLink">
-          <span class="icon">⚖️</span>
+          <span class="action-icon">⚖️</span>
           <span>신문고 신고하기</span>
         </button>
         <button class="action-card trend" id="trendLink">
-          <span class="icon">📈</span>
+          <span class="action-icon">📈</span>
           <span>14일 유가 트렌드</span>
         </button>
       </section>
     </div>
 
-    <!-- COMMUNITY TAB (Hidden by default) -->
+    <!-- COMMUNITY TAB -->
     <div id="communityTab" class="tab-pane">
-      <section class="glass-card comm-header">
-        <h2 class="card-title-v4">자유게시판 (정보 교류)</h2>
-        <p class="sub-text">실제 금액과 다른 정보를 발견하면 공유해주세요!</p>
+      <section class="glass-card" style="margin:1rem; padding:1.5rem;">
+        <h2 class="card-title-v4">자유게시판</h2>
+        <p style="color:#94a3b8; font-size:0.9rem;">실제 금액과 다른 정보를 발견하면 공유해주세요! 가장 싼 주유소를 서로 추천하는 공간입니다.</p>
       </section>
-      <div id="forumList" class="forum-list">
-        <!-- Community Posts -->
-      </div>
+      <div id="forumList" class="forum-list"></div>
+    </div>
+
+    <!-- MAP TAB -->
+    <div id="mapTab" class="tab-pane">
+      <section class="glass-card map-stack-full"
+        style="margin:1rem; height:60vh; border-radius:20px; overflow:hidden; position:relative;">
+        <div id="fullMap" class="map-v4" style="width:100%; height:100%;"></div>
+      </section>
+    </div>
+
+    <!-- MORE TAB -->
+    <div id="moreTab" class="tab-pane">
+      <section class="glass-card" style="margin:1rem; padding:1.5rem;">
+        <h2 class="card-title-v4">더보기</h2>
+        <div style="display:flex; flex-direction:column; gap:1rem; margin-top:1rem;">
+          <div class="more-item">⚙️ 설정</div>
+          <div class="more-item">📊 유가 자동 알림</div>
+          <div class="more-item">🔗 앱 공유하기</div>
+          <div class="more-item">📝 앱 버전 v4.1</div>
+        </div>
+      </section>
     </div>
   </div>
 
-  <!-- Bottom Navigation Bar (As per image) -->
+  <!-- Bottom Navigation -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-tab="home">
-      <span class="nav-icon active">🏠</span>
+      <span class="nav-icon">🏠</span>
       <span class="nav-label">홈</span>
     </button>
     <button class="nav-item" data-tab="fuel">
@@ -111,7 +124,7 @@
       <span class="nav-label">커뮤니티</span>
     </button>
     <button class="nav-item" data-tab="more">
-      <span class="nav-icon">...</span>
+      <span class="nav-icon">···</span>
       <span class="nav-label">더보기</span>
     </button>
   </nav>
