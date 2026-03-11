@@ -6,6 +6,7 @@ const mockStations = [
   { rank: 4, name: "SK에너지(주)신세계주유소", price: 1798, diff: "+3,700", dist: "1.03km", addr: "주소 정보 없음" },
 ];
 
+let radarAngle = 0;
 function renderRadar() {
   const canvas = document.getElementById('radarCanvas');
   if (!canvas) return;
@@ -13,33 +14,55 @@ function renderRadar() {
   const size = 120;
   const center = size / 2;
 
-  // Clear
-  ctx.clearRect(0, 0, size, size);
+  function draw() {
+    // Clear
+    ctx.clearRect(0, 0, size, size);
 
-  // Draw circles
-  ctx.strokeStyle = 'rgba(94, 234, 212, 0.2)';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.arc(center, center, 20, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(center, center, 40, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(center, center, 55, 0, Math.PI * 2); ctx.stroke();
+    // Draw circles
+    ctx.strokeStyle = 'rgba(94, 234, 212, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(center, center, 20, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(center, center, 40, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(center, center, 55, 0, Math.PI * 2); ctx.stroke();
 
-  // Draw cross
-  ctx.beginPath(); ctx.moveTo(center, 5); ctx.lineTo(center, size - 5); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(5, center); ctx.lineTo(size - 5, center); ctx.stroke();
+    // Draw cross
+    ctx.beginPath(); ctx.moveTo(center, 5); ctx.lineTo(center, size - 5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(5, center); ctx.lineTo(size - 5, center); ctx.stroke();
 
-  // Draw dots
-  ctx.fillStyle = '#a7f3d0';
-  const dots = [
-    { x: 40, y: 30 }, { x: 80, y: 40 }, { x: 60, y: 70 }, { x: 30, y: 80 }, { x: 90, y: 85 }, { x: 55, y: 100 }
-  ];
-  dots.forEach(d => {
+    // Draw sweep
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(radarAngle);
     ctx.beginPath();
-    ctx.arc(d.x, d.y, 3, 0, Math.PI * 2);
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, 55, 0, Math.PI * 0.25);
+    ctx.lineTo(0, 0);
+    const grad = ctx.createLinearGradient(0, 0, 55, 55);
+    grad.addColorStop(0, 'rgba(94, 234, 212, 0.4)');
+    grad.addColorStop(1, 'rgba(94, 234, 212, 0)');
+    ctx.fillStyle = grad;
     ctx.fill();
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#5eead4';
-  });
-  ctx.shadowBlur = 0;
+    ctx.restore();
+
+    // Draw dots
+    ctx.fillStyle = '#a7f3d0';
+    const dots = [
+      { x: 40, y: 30 }, { x: 80, y: 40 }, { x: 60, y: 70 }, { x: 30, y: 80 }, { x: 90, y: 85 }, { x: 55, y: 100 }
+    ];
+    dots.forEach(d => {
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#5eead4';
+    });
+    ctx.shadowBlur = 0;
+
+    radarAngle += 0.05;
+    requestAnimationFrame(draw);
+  }
+
+  draw();
 }
 
 function renderList() {
@@ -77,6 +100,23 @@ document.addEventListener('DOMContentLoaded', () => {
     slider.addEventListener('input', (e) => {
       if (radiusText) radiusText.textContent = e.target.value + 'km';
       if (rdrRadius) rdrRadius.textContent = e.target.value + 'km';
+    });
+  }
+
+  // Button Event Listeners
+  const shinmungoBtn = document.getElementById('shinmungoBtn');
+  if (shinmungoBtn) {
+    shinmungoBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert("🚨 신문고 제보 페이지로 이동합니다.");
+    });
+  }
+
+  const shareCommunityBtn = document.getElementById('shareCommunityBtn');
+  if (shareCommunityBtn) {
+    shareCommunityBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert("📢 커뮤니티에 성공적으로 최저가 주유소를 공유했습니다!");
     });
   }
 });
