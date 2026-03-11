@@ -32,7 +32,12 @@ const els = {
   writePostBtn: document.getElementById("writePostBtn"),
   shinmungoBtn: document.getElementById("shinmungoBtn"),
   filterChips: document.querySelectorAll(".chip"),
-  navItems: document.querySelectorAll(".nav-item")
+  navItems: document.querySelectorAll(".nav-item"),
+  tabViews: document.querySelectorAll(".tab-view"),
+  openMap: document.getElementById("openMap"),
+  closeMap: document.getElementById("closeMap"),
+  mapTab: document.getElementById("mapTab"),
+  fullMap: document.getElementById("fullMap")
 };
 
 const state = {
@@ -181,6 +186,34 @@ function initEvents() {
         renderDashboard();
       }
     } catch (e) { console.error("Search failed"); }
+  });
+
+  // Tab & Map Switching Logic (Restored)
+  els.openMap?.addEventListener("click", () => {
+    els.mapTab?.classList.remove("inactive");
+    if (!state.map) initMap();
+  });
+
+  els.closeMap?.addEventListener("click", () => {
+    els.mapTab?.classList.add("inactive");
+  });
+
+  els.navItems.forEach(nav => nav.addEventListener("click", () => {
+    els.navItems.forEach(n => n.classList.remove("active"));
+    nav.classList.add("active");
+    // Simple tab logic: if data-tab="sys", we could show/hide widgets, 
+    // but for now, we just handle the home/map distinction.
+  }));
+}
+
+let map;
+function initMap() {
+  if (state.map || !els.fullMap) return;
+  state.map = L.map('fullMap').setView([state.lat, state.lng], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(state.map);
+  state.stations.forEach(s => {
+    L.marker([37.5 + (Math.random() - 0.5) * 0.1, 126.9 + (Math.random() - 0.5) * 0.1])
+      .addTo(state.map).bindPopup(s.name);
   });
 }
 

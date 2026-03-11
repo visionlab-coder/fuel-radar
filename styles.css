@@ -15,6 +15,12 @@
   --radius-v1: 14px;
 }
 
+.inactive {
+  display: none !important;
+}
+
+/* 긴급 복구: 비활성 요소 숨김 */
+
 /* Base Optimization */
 * {
   box-sizing: border-box;
@@ -94,7 +100,11 @@ body {
 
 .system-header,
 .widget {
-  @extend .glass-panel;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-v1);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
 }
 
 /* Symbolic extend - implemented as manual classes in HTML */
