@@ -1,0 +1,13 @@
+.env.local
+.env.*.local
+.env
+
+# 로컬 개발 전용 서버 (GitHub/Vercel 불필요)
+developer-server.js
+
+# 의존성
+node_modules/
+
+# 운영체제
+.DS_Store
+Thumbs.db
