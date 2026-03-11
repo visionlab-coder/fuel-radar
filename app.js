@@ -1,7 +1,6 @@
-/**
- * 기름따라 졸졸졸 V8.0 - Ultra-Premium Tactical Reconstruction
- * Design: High-Density Dashboard, 3-Column Grid, Full Autonomous
- */
+ * 기름따라 졸졸졸 V1.0 - Official Release
+  * Design: Ultra - Premium Tactical HUD, Global Sync, Full Autonomous
+    */
 
 const els = {
   locationText: document.getElementById("locationText"),
@@ -35,9 +34,9 @@ const state = {
   animationId: null,
   filters: { wash: false, mart: false, repair: false },
   forumPosts: [
-    { user: "COMMANDER_X", content: "V8.0 시스템 정밀 점검 완료. 모든 데이터가 정상적으로 동기화되었습니다." },
-    { user: "INTEL_BOT", content: "강남구 일대 평균 유가 5원 하락 감지. 타겟 목록 갱신 중..." },
-    { user: "SCOUT_7", content: "모든 제보는 팩트 체크 후 실시간 가중치 부여됩니다." }
+    { user: "COMMANDER_X", content: "V1.0 정심 시스템 기동 완료. 모든 데이터가 암호화 동기화되었습니다." },
+    { user: "INTEL_BOT", content: "지역별 유가 변동 실시간 추적 중... 데이터 센터와 정상 연결되었습니다." },
+    { user: "SCOUT_7", content: "제보 시스템 가동 중. 시민 여러분의 소중한 정보를 기다립니다." }
   ]
 };
 
@@ -194,7 +193,7 @@ function initEvents() {
   });
 
   els.searchBtn?.addEventListener("click", async () => {
-    const q = prompt("LOCATION SEARCH (V8 AUTONOMOUS):");
+    const q = prompt("위치 검색 (V1.0 OFFICIAL):");
     if (!q) return;
     els.locationText.textContent = "SEARCHING...";
     try {

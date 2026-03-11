@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>기름따라 졸졸졸 - Tactical HUD Dashboard V8.0</title>
+  <title>기름따라 졸졸졸 - Tactical HUD v1.0 Official</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css">
@@ -13,19 +13,16 @@
 </head>
 
 <body class="tactical-os-v8">
-  <!-- Background Layers -->
   <div class="hud-scanning-grid"></div>
   <div class="ambient-glow g-1"></div>
   <div class="ambient-glow g-2"></div>
 
-  <!-- Main System UI -->
   <div class="dashboard-wrapper">
 
-    <!-- Top System Bar -->
     <header class="system-header">
       <div class="brand-logic">
         <div class="brand-logo">기름따라 졸졸졸</div>
-        <div class="system-tag">TACTICAL_FUEL_HUD_V8.0 // PASS_SKILL_ACTIVE</div>
+        <div class="system-tag">TACTICAL_FUEL_HUD_V1.0 // OFFICIAL_RELEASE</div>
       </div>
       <div class="system-readouts">
         <div class="readout-box">
@@ -43,20 +40,17 @@
       </div>
     </header>
 
-    <!-- Tactical Grid Layout -->
     <main class="dashboard-grid">
 
-      <!-- Left Column: Combat Intel (Radar & Trends) -->
       <aside class="grid-col col-left">
         <section class="widget radar-widget">
           <div class="widget-header">
-            <span class="w-icon">🛰️</span>
+            <span class="w-icon">📡</span>
             <span class="w-title">TACTICAL SCANNER</span>
             <span class="w-status">SCANNING...</span>
           </div>
           <div class="canvas-wrap">
             <canvas id="radarCanvas" width="800" height="800"></canvas>
-            <!-- Overlay technical data -->
             <div class="radar-overlay-data l">LAT: <span id="curLat">0.0</span></div>
             <div class="radar-overlay-data r">LNG: <span id="curLng">0.0</span></div>
           </div>
@@ -68,21 +62,18 @@
 
         <section class="widget trend-widget">
           <div class="widget-header">
-            <span class="w-icon">📈</span>
+            <span class="w-icon">📊</span>
             <span class="w-title">14-DAY MARKET TREND</span>
           </div>
-          <div id="trendHistory" class="technical-list">
-            <!-- Dynamic trend data -->
-          </div>
+          <div id="trendHistory" class="technical-list"></div>
         </section>
       </aside>
 
-      <!-- Center Column: Primary Operations (Station List) -->
       <div class="grid-col col-main">
         <section class="widget list-widget">
           <div class="widget-header">
             <div class="header-group">
-              <span class="w-icon">📊</span>
+              <span class="w-icon">🧭</span>
               <span class="w-title">STATION RANKINGS</span>
             </div>
             <div class="filter-group">
@@ -98,28 +89,25 @@
             </div>
           </div>
           <div class="filter-chips-v8">
-            <button class="chip" data-filter="wash">WASH 🧼</button>
-            <button class="chip" data-filter="mart">MART 🏪</button>
-            <button class="chip" data-filter="repair">FIX 🔧</button>
+            <button class="chip" data-filter="wash">🫧 세차장</button>
+            <button class="chip" data-filter="mart">🛒 편의점</button>
+            <button class="chip" data-filter="repair">🛠️ 정비소</button>
           </div>
-          <div id="stationList" class="station-scroller">
-            <!-- High-density station items -->
-          </div>
+          <div id="stationList" class="station-scroller"></div>
         </section>
       </div>
 
-      <!-- Right Column: System Support (Reporter & Calc) -->
       <aside class="grid-col col-right">
         <section class="widget report-widget">
           <div class="widget-header">
-            <span class="w-icon">🚨</span>
+            <span class="w-icon">🛡️</span>
             <span class="w-title">TACTICAL REPORT CENTER</span>
           </div>
           <div class="report-content">
             <p class="r-desc">이상 가격 및 허위 정보 발견 시 즉시 제보 바랍니다.</p>
             <div class="report-btns">
-              <button id="shinmungoBtn" class="r-btn shin">신문고 제보</button>
-              <button id="writePostBtn" class="r-btn detail">상세 제보 작성</button>
+              <button id="shinmungoBtn" class="r-btn shin">📜 신문고 제보</button>
+              <button id="writePostBtn" class="r-btn detail">📝 상세 제보 작성</button>
             </div>
           </div>
         </section>
@@ -127,7 +115,7 @@
         <section class="widget calc-widget">
           <div class="widget-header">
             <span class="w-icon">🧮</span>
-            <span class="w-title">FUEL_SAVINGS_SIMULATOR</span>
+            <span class="w-title">SAVINGS_SIMULATOR</span>
           </div>
           <div class="calc-body-v8">
             <div class="input-line">
@@ -143,28 +131,24 @@
 
         <section class="widget forum-widget">
           <div class="widget-header">
-            <span class="w-icon">💬</span>
+            <span class="w-icon">📜</span>
             <span class="w-title">INTEL_FEED (COMMUNITY)</span>
           </div>
-          <div id="forumList" class="forum-scroller">
-            <!-- Intel feed items -->
-          </div>
+          <div id="forumList" class="forum-scroller"></div>
         </section>
       </aside>
 
     </main>
 
-    <!-- Full Map Overlay (Pop-up or View) -->
     <div id="mapTab" class="tab-view inactive">
-      <button id="closeMap" class="close-btn">BACK_TO_HUD</button>
+      <button id="closeMap" class="close-btn">BACK_TO__HUD</button>
       <div id="fullMap"></div>
     </div>
 
-    <!-- Bottom Action Bar (Mobile fallback) -->
     <nav class="system-nav">
       <button class="nav-item active" data-tab="home">HUD_CENTER</button>
       <button class="nav-item" id="openMap">MAP_INTEL</button>
-      <button class="nav-item" data-tab="sys">SYSTEM_LOG</button>
+      <button class="nav-item" data-tab="sys">SYS_LOGO</button>
     </nav>
   </div>
 
