@@ -22,13 +22,14 @@ async function reverseGeocode(lat, lng) {
 
 module.exports = async (req, res) => {
   try {
-    const lat = parseNumber(req.query.lat);
-    const lng = parseNumber(req.query.lng);
+    // 유연한 파라미터 수신 (lat/lng 또는 x/y 지원)
+    const lat = parseNumber(pick(req.query, ["lat", "y"]));
+    const lng = parseNumber(pick(req.query, ["lng", "x"]));
     const radiusKm = Math.min(30, Math.max(1, parseNumber(req.query.radiusKm) || 10));
     const fuel = String(req.query.fuel || "gasoline").toLowerCase();
 
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-      return res.status(400).json({ error: "lat,lng query is required" });
+      return res.status(400).json({ error: "Location coordinates (lat/lng or y/x) are required" });
     }
 
     // WGS84 위경도를 오피넷 표준인 KATEC(TM) 좌표로 변환
