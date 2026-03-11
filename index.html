@@ -1,255 +1,118 @@
-<!doctype html>
-<html lang="ko">
+<!-- Premium Background Layers -->
+<div class="bg-shape bg-a"></div>
+<div class="bg-shape bg-b"></div>
+<div class="bg-noise"></div>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>기름따라 졸졸졸</title>
-  <link rel="stylesheet" href="./styles.css" />
-  <!-- Leaflet.js 지도 라이브러리 -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Premium Background Layers -->
-  <div class="bg-shape bg-a"></div>
-  <div class="bg-shape bg-b"></div>
-  <div class="bg-noise"></div>
+<main class="app">
+  <!-- Ultra-Premium Header (As per image) -->
+  <header class="app-header">
+    <div class="header-left">
+      <h1 class="app-logo">기름따라 <span class="accent">졸졸졸</span> <span class="emoji">⛽</span></h1>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="notifBtn"><span class="icon">🔔</span></button>
+      <button class="icon-btn" id="searchBtn"><span class="icon">🔍</span></button>
+    </div>
+  </header>
 
-  <main class="app">
-    <!-- Ultra-Premium Header -->
-    <header class="premium-header">
-      <p class="eyebrow">Next-Gen Fuel Intelligence</p>
-      <div class="logo-area">
-        <h1 class="glitch-text">기름따라 <span class="neon-text">졸졸졸</span></h1>
-      </div>
-      <div id="locationBadge" class="location-badge">
-        <span class="pulse-dot"></span>
-        <span id="locationText" class="sub">Scanning Location...</span>
-      </div>
-    </header>
+  <!-- Content Sections (Tab Based) -->
+  <div id="tabContent">
+    <!-- HOME TAB: The Main UI from Image -->
+    <div id="homeTab" class="tab-pane active">
 
-    <!-- Interactive Radar Section -->
-    <section class="panel radar-panel">
-      <header class="card-title">
-        <span class="icon">📡</span> 실시간 주변 스캔
-      </header>
-      <div class="radar-container">
-        <div id="radarScanner" class="radar-scanner">
-          <div id="radarBlips" class="radar-blips"></div>
-          <span class="radar-core"></span>
-        </div>
-        <p id="radarStatus" class="radar-status">주변 정보를 탐색하고 있습니다...</p>
-      </div>
-    </section>
-
-    <!-- Premium Minimap Section -->
-    <section class="panel minimap-panel">
-      <header class="card-title">
-        <span class="icon">📍</span> 라이브 맵
-        <span id="mapStatus" class="status-badge">LIVE</span>
-      </header>
-      <div id="miniMap" class="map-container"></div>
-    </section>
-
-    <!-- Analytics Section -->
-    <section class="panel stats-panel">
-      <header class="card-title">
-        <span class="icon">📊</span> 오늘의 인사이트
-      </header>
-      <div id="priceTrend" class="price-trend">
-        <div class="stat-main">
-          <span class="stat-label">추천 최저가</span>
-          <div class="stat-value-group">
-            <span id="avgPrice" class="stat-value">--</span>
-            <span class="stat-unit">원</span>
+      <!-- Radar Scan Card -->
+      <section class="glass-card radar-stack">
+        <div class="radar-visual">
+          <div class="radar-scanner-v4">
+            <div id="radarBlips" class="radar-blips"></div>
+            <div class="radar-sweep"></div>
+            <div class="radar-center"></div>
           </div>
         </div>
-        <div id="priceDelta" class="stat-delta">분석 중...</div>
-      </div>
-      <div class="savings-card">
-        <p class="savings-desc">
-          한 달 예상 절약액<br>
-          <span id="potentialSavings" class="highlight">--</span>원
-        </p>
-      </div>
-    </section>
+        <div class="radar-info">
+          <h2 class="card-title-v4">최저가 주유소 스캔 중</h2>
+          <div class="location-row">
+            <span class="loc-text">현재 위치: <span id="locationText" class="val">서울 강남구</span></span>
+            <button id="refreshBtn" class="mini-btn">Refresh</button>
+          </div>
+        </div>
+      </section>
 
-    <!-- Station List Section -->
-    <section class="panel list-panel">
-      <div class="list-header">
-        <header class="card-title">
-          <span class="icon">⛽</span> 주유소 상세 상세
-        </header>
-        <div class="filter-controls">
-          <select id="fuelSelect" class="cyber-select">
+      <!-- Mini Map Card -->
+      <section class="glass-card map-stack">
+        <div id="miniMap" class="map-v4"></div>
+        <div class="map-overlay">
+          <span class="map-brand">mapbox</span>
+        </div>
+      </section>
+
+      <!-- Station List Section -->
+      <section class="list-container">
+        <h3 class="list-header-v4">내 주변 주유소 목록</h3>
+
+        <div class="filter-bar-v4">
+          <select id="fuelSelect" class="v4-select">
             <option value="gasoline">휘발유</option>
             <option value="diesel">경유</option>
           </select>
-          <select id="radiusInput" class="cyber-select">
+          <select id="radiusInput" class="v4-select">
             <option value="1">1km</option>
             <option value="3" selected>3km</option>
             <option value="5">5km</option>
-            <option value="10">10km</option>
           </select>
         </div>
-      </div>
-      <div id="stationList" class="station-list">
-        <!-- 동적 렌더링 -->
-      </div>
-      <button id="loadMoreBtn" class="cyber-button hidden" style="margin-top: 1rem; padding: 0.8rem;">더 보기</button>
-    </section>
 
-    <!-- Bottom Controls -->
-    <footer class="bottom-controls">
-      <div class="control-grid">
-        <label class="cyber-check">
-          <input type="checkbox" id="autoRefresh" checked>
-          <span class="check-mark"></span>
-          실시간 자동 갱신
-        </label>
-        <button id="shareBtn" class="cyber-button">
-          🚀 스마트 결과 공유
+        <div id="stationList" class="v4-station-list">
+          <!-- Dynamic Items with Image Styling -->
+        </div>
+      </section>
+
+      <!-- New Features Action Bar -->
+      <section class="action-grid">
+        <button class="action-card report" id="reportLink">
+          <span class="icon">⚖️</span>
+          <span>신문고 신고하기</span>
         </button>
+        <button class="action-card trend" id="trendLink">
+          <span class="icon">📈</span>
+          <span>14일 유가 트렌드</span>
+        </button>
+      </section>
+    </div>
+
+    <!-- COMMUNITY TAB (Hidden by default) -->
+    <div id="communityTab" class="tab-pane">
+      <section class="glass-card comm-header">
+        <h2 class="card-title-v4">자유게시판 (정보 교류)</h2>
+        <p class="sub-text">실제 금액과 다른 정보를 발견하면 공유해주세요!</p>
+      </section>
+      <div id="forumList" class="forum-list">
+        <!-- Community Posts -->
       </div>
-    </footer>
-  </main>
-  <label>
-    리스트 기준
-    <select id="sortModeSelect">
-      <option value="price" selected>가격순</option>
-      <option value="smart">실질절약순</option>
-    </select>
-  </label>
-  <label>
-    반경
-    <input id="radiusInput" type="range" min="3" max="20" step="1" value="10" />
-    <span id="radiusLabel">10km</span>
-  </label>
-  <label>
-    자동 갱신
-    <select id="refreshSecSelect">
-      <option value="30">30초</option>
-      <option value="60">60초</option>
-      <option value="120" selected>120초</option>
-    </select>
-  </label>
-  <label class="check-row">
-    <input id="autoRefreshCheck" type="checkbox" checked />
-    <span>실시간 자동 새로고침</span>
-  </label>
-  <button id="refreshBtn">새로고침</button>
-  </section>
-
-  <section class="grid">
-    <article class="panel highlight">
-      <p class="card-title">내 주변 최저가</p>
-      <h2 id="cheapestName">-</h2>
-      <p id="cheapestPrice" class="price">-</p>
-      <p id="cheapestMeta" class="meta">-</p>
-    </article>
-
-    <article class="panel">
-      <p id="trendTitle" class="card-title">14일 전 대비</p>
-      <p id="trendCurrent" class="meta">현재: -</p>
-      <p id="trendPast" class="meta">비교 기준: -</p>
-      <p id="trendDelta" class="delta">-</p>
-      <div id="dailyDiffList" class="mini-list"></div>
-    </article>
-  </section>
-
-  <section class="panel smart-panel">
-    <div class="smart-head">
-      <p class="card-title">스마트 최적 주유 솔루션</p>
-      <span id="smartModeText" class="smart-pill">거리+연비 반영</span>
     </div>
-    <div class="smart-grid">
-      <label>
-        예상 주유량(L)
-        <input id="fillLitersInput" type="number" min="5" max="120" step="1" value="40" />
-      </label>
-      <label>
-        내 연비(km/L)
-        <input id="efficiencyInput" type="number" min="3" max="30" step="0.5" value="12" />
-      </label>
-    </div>
-    <h3 id="smartBestName" class="smart-name">-</h3>
-    <p id="smartNetSave" class="smart-value">-</p>
-    <p id="smartDesc" class="meta">-</p>
-    <div class="smart-bar">
-      <div id="smartBarFill"></div>
-    </div>
-  </section>
+  </div>
 
-  <section class="grid growth-grid">
-    <article class="panel viral-panel">
-      <p class="card-title">오늘의 절약 요약</p>
-      <p id="shareHeadline" class="share-headline">오늘 절약 금액 계산 중...</p>
-      <p id="shareBody" class="meta">데이터가 갱신되면 공유 문구가 생성됩니다.</p>
-      <div class="share-actions">
-        <button id="shareCardBtn" type="button">절약 결과 공유하기</button>
-      </div>
-      <p id="shareStatusText" class="status">공유 대기 중</p>
-    </article>
-    <article class="panel surge-panel">
-      <p class="card-title">급등 감시</p>
-      <p id="surgeBadge" class="surge-badge">분석 대기</p>
-      <p id="surgeText" class="meta">일별 상승폭 분석을 준비하고 있어요.</p>
-      <p id="communityScoreText" class="meta">커뮤니티 참여지수 계산 중...</p>
-    </article>
-  </section>
-
-  <section class="panel">
-    <div class="list-head">
-      <p id="listTitle" class="card-title">반경 내 가격순 목록</p>
-      <span id="listCount">0개</span>
-    </div>
-    <div id="list" class="list"></div>
-
-    <!-- TOP 5 제한을 위한 더보기 버튼 -->
-    <div id="showMoreContainer" class="show-more-container is-hidden">
-      <button id="showMoreBtn" class="show-more-btn">
-        <span>주유소 더 보기</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m6 9 6 6 6-6" />
-        </svg>
-      </button>
-    </div>
-  </section>
-
-  <section id="reportPanel" class="panel report-panel">
-    <p class="card-title">가격 이상 신고</p>
-    <p class="report-help">현장 사진을 찍고 바로 신고 초안을 접수한 뒤 신문고로 이동할 수 있습니다.</p>
-    <div class="report-grid">
-      <label>
-        신고 대상 주유소
-        <select id="reportStationSelect"></select>
-      </label>
-      <label>
-        확인 가격(원/L)
-        <input id="reportPriceInput" type="number" min="0" step="1" placeholder="예: 2299" />
-      </label>
-      <label class="report-memo">
-        메모
-        <textarea id="reportMemoInput" rows="3" placeholder="예: 주변 평균 대비 과도하게 높고, 표시판 가격과 결제 가격이 달랐습니다."></textarea>
-      </label>
-      <label>
-        사진 촬영/첨부
-        <input id="reportPhotoInput" type="file" accept="image/*" capture="environment" />
-      </label>
-    </div>
-    <img id="reportPreview" class="report-preview" alt="신고 사진 미리보기" hidden />
-    <div class="report-actions">
-      <button id="reportSubmitBtn" type="button">신고 올리기</button>
-      <a id="sinmungoLink" class="sinmungo-link" href="https://www.epeople.go.kr/" target="_blank"
-        rel="noopener noreferrer">신문고 이동</a>
-    </div>
-    <textarea id="reportDraftText" class="report-draft" rows="4" readonly></textarea>
-    <p id="reportStatusText" class="status">신고 대기 중</p>
-  </section>
-
-  <p id="statusText" class="status">로딩 중...</p>
-  </main>
-  <script src="./app.js" defer></script>
-  </body>
-
-</html>
+  <!-- Bottom Navigation Bar (As per image) -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="home">
+      <span class="nav-icon active">🏠</span>
+      <span class="nav-label">홈</span>
+    </button>
+    <button class="nav-item" data-tab="fuel">
+      <span class="nav-icon">⛽</span>
+      <span class="nav-label">내 주유</span>
+    </button>
+    <button class="nav-item" data-tab="map">
+      <span class="nav-icon">📍</span>
+      <span class="nav-label">지도</span>
+    </button>
+    <button class="nav-item" data-tab="community">
+      <span class="nav-icon">💬</span>
+      <span class="nav-label">커뮤니티</span>
+    </button>
+    <button class="nav-item" data-tab="more">
+      <span class="nav-icon">...</span>
+      <span class="nav-label">더보기</span>
+    </button>
+  </nav>
+</main>
