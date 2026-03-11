@@ -4,188 +4,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>기름따라 졸졸졸 - Tactical Fuel Dashboard V7.0</title>
+  <title>기름따라 졸졸졸 - Tactical HUD Dashboard V8.0</title>
 
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css">
-  <!-- YouTube Favored High-Visibility Fonts (Pretendard Variable) -->
   <link rel="stylesheet" as="style" crossorigin
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
 </head>
 
-<body class="tactical-os">
-  <!-- Dynamic HUD Background -->
-  <div class="hud-grid-overlay"></div>
-  <div class="bg-glow-a"></div>
-  <div class="bg-glow-b"></div>
+<body class="tactical-os-v8">
+  <!-- Background Layers -->
+  <div class="hud-scanning-grid"></div>
+  <div class="ambient-glow g-1"></div>
+  <div class="ambient-glow g-2"></div>
 
-  <main class="app-container">
-    <!-- Top Tactical Header: Branded Version -->
-    <header class="hud-header">
-      <div class="header-main">
-        <div class="header-logo-group">
-          <span class="hud-label">SYSTEM_STATUS: AUTONOMOUS_V7</span>
-          <h1 class="hud-logo-text">기름따라 졸졸졸 <span class="v-badge">V7</span></h1>
-        </div>
-        <div class="header-location">
-          <span class="loc-icon">🛰️</span>
-          <span id="locationText" class="loc-val">GPS_SYNCING_WAIT...</span>
-        </div>
+  <!-- Main System UI -->
+  <div class="dashboard-wrapper">
+
+    <!-- Top System Bar -->
+    <header class="system-header">
+      <div class="brand-logic">
+        <div class="brand-logo">기름따라 졸졸졸</div>
+        <div class="system-tag">TACTICAL_FUEL_HUD_V8.0 // PASS_SKILL_ACTIVE</div>
       </div>
-      <div class="header-actions">
-        <button class="hud-btn-icon" id="searchBtn">SEARCH</button>
-        <button class="hud-btn-icon" id="notifBtn">NOTIF</button>
+      <div class="system-readouts">
+        <div class="readout-box">
+          <span class="label">LOCATION</span>
+          <span id="locationText" class="value">INITIALIZING...</span>
+        </div>
+        <div class="readout-box">
+          <span class="label">SYSTEM TIME</span>
+          <span id="sysTime" class="value">00:00:00</span>
+        </div>
+        <div class="readout-box action-box">
+          <button id="searchBtn" class="hud-mini-btn">SEARCH</button>
+          <button id="refreshBtn" class="hud-mini-btn primary">SYNC</button>
+        </div>
       </div>
     </header>
 
-    <!-- Main Tactical Content -->
-    <div id="tabContent" class="hud-body">
+    <!-- Tactical Grid Layout -->
+    <main class="dashboard-grid">
 
-      <!-- HOME TAB: Mission Control -->
-      <div id="homeTab" class="tab-pane active">
-
-        <!-- Hero HUD Section: Radar & Integrated Reporting -->
-        <section class="hud-hero">
-          <div class="radar-module">
-            <div class="canvas-container">
-              <canvas id="radarCanvas" width="800" height="800"></canvas>
-            </div>
-            <div class="radar-meta">
-              <div class="meta-row">
-                <span class="meta-label">DETECTIONS:</span>
-                <span id="targetCount" class="meta-val">0 UNITS</span>
-              </div>
-              <p id="radarStatus" class="radar-status-msg">INITIALIZING_SCANNER...</p>
-            </div>
+      <!-- Left Column: Combat Intel (Radar & Trends) -->
+      <aside class="grid-col col-left">
+        <section class="widget radar-widget">
+          <div class="widget-header">
+            <span class="w-icon">🛰️</span>
+            <span class="w-title">TACTICAL SCANNER</span>
+            <span class="w-status">SCANNING...</span>
           </div>
-
-          <div class="quick-report-module">
-            <div class="report-header">
-              <span class="report-badge">INTEGRATED_REPORT</span>
-              <p class="report-desc">이상 가격 발견 시 즉시 신고하세요.</p>
-            </div>
-
-            <!-- Parallel Reporting UI -->
-            <div class="report-action-grid">
-              <button id="shinmungoBtn" class="report-cta-v7 shinmungo" onclick="alert('신문고 제보 시스템 가동')">
-                <span class="cta-icon">📜</span>
-                <span>신문고 제보</span>
-              </button>
-              <button id="reportBtn" class="report-cta-v7 detail" onclick="state.activeTab='community'; updateUI();">
-                <span class="cta-icon">📝</span>
-                <span>상세 제보</span>
-              </button>
-            </div>
-            <p class="report-footer">깨끗한 유가 문화를 함께 만듭니다.</p>
+          <div class="canvas-wrap">
+            <canvas id="radarCanvas" width="800" height="800"></canvas>
+            <!-- Overlay technical data -->
+            <div class="radar-overlay-data l">LAT: <span id="curLat">0.0</span></div>
+            <div class="radar-overlay-data r">LNG: <span id="curLng">0.0</span></div>
+          </div>
+          <div class="radar-stats">
+            <div class="stat-item"><span class="l">TARGETS:</span><span id="targetCount" class="v">0</span></div>
+            <div class="stat-item"><span class="l">SCAN_RATE:</span><span class="v">60Hz</span></div>
           </div>
         </section>
 
-        <!-- Analytics HUD Section -->
-        <section class="hud-analytics">
-          <div class="trend-card">
-            <div class="card-header">
-              <span class="card-icon">📈</span>
-              <h3 class="card-title">14-DAY TREND</h3>
-            </div>
-            <div id="trendHistory" class="trend-history-list">
-              <!-- Dynamic trend items -->
-            </div>
+        <section class="widget trend-widget">
+          <div class="widget-header">
+            <span class="w-icon">📈</span>
+            <span class="w-title">14-DAY MARKET TREND</span>
           </div>
-
-          <div class="calc-card">
-            <div class="card-header">
-              <span class="card-icon">🧮</span>
-              <h3 class="card-title">SAVINGS CALC</h3>
-            </div>
-            <div class="calc-body">
-              <div class="calc-row">
-                <label>FUEL(L)</label>
-                <input type="number" value="40" id="calcFuel" class="hud-input">
-              </div>
-              <div class="calc-result">
-                <span class="res-label">EXP. SAVINGS</span>
-                <span id="resAmount" class="res-val">+18,500 KRW</span>
-              </div>
-            </div>
+          <div id="trendHistory" class="technical-list">
+            <!-- Dynamic trend data -->
           </div>
         </section>
+      </aside>
 
-        <!-- Tactical Rankings List -->
-        <section class="hud-rankings">
-          <div class="section-title-row">
-            <h3 class="section-title">TACTICAL LIST</h3>
-            <div class="list-filters-v6">
-              <select id="fuelSelect" class="hud-select-v6">
+      <!-- Center Column: Primary Operations (Station List) -->
+      <div class="grid-col col-main">
+        <section class="widget list-widget">
+          <div class="widget-header">
+            <div class="header-group">
+              <span class="w-icon">📊</span>
+              <span class="w-title">STATION RANKINGS</span>
+            </div>
+            <div class="filter-group">
+              <select id="fuelSelect" class="hud-select">
                 <option value="gasoline">휘발유</option>
                 <option value="diesel">경유</option>
               </select>
-              <select id="radiusSelect" class="hud-select-v6">
+              <select id="radiusSelect" class="hud-select">
                 <option value="1">1KM</option>
                 <option value="3" selected>3KM</option>
                 <option value="5">5KM</option>
               </select>
             </div>
           </div>
-
-          <div class="filter-icons-row">
-            <button class="filter-chip" data-filter="wash">🧼 세차장</button>
-            <button class="filter-chip" data-filter="mart">🏪 편의점</button>
-            <button class="filter-chip" data-filter="repair">🔧 정비소</button>
-            <button id="refreshBtn" class="filter-refresh-chip">🔄 REFRESH</button>
+          <div class="filter-chips-v8">
+            <button class="chip" data-filter="wash">WASH 🧼</button>
+            <button class="chip" data-filter="mart">MART 🏪</button>
+            <button class="chip" data-filter="repair">FIX 🔧</button>
           </div>
-
-          <div id="stationList" class="station-grid-v6">
-            <!-- Tactical List Items -->
+          <div id="stationList" class="station-scroller">
+            <!-- High-density station items -->
           </div>
         </section>
       </div>
 
-      <!-- MAP TAB -->
-      <div id="mapTab" class="tab-pane">
-        <section class="hud-full-map-card">
-          <div id="fullMap" style="width:100%; height:80vh;"></div>
-        </section>
-      </div>
-
-      <!-- COMMUNITY TAB -->
-      <div id="communityTab" class="tab-pane">
-        <section class="community-header">
-          <h2 class="hud-title">커뮤니티 자유게시판</h2>
-          <button class="report-high-cta" id="writePostBtn" style="padding: 0.5rem 1rem; font-size: 0.8rem;">📝
-            글쓰기</button>
-        </section>
-        <div id="forumList" class="forum-grid-v6">
-          <!-- Dynamic forum items -->
-        </div>
-      </div>
-
-      <!-- MORE TAB -->
-      <div id="moreTab" class="tab-pane">
-        <section class="sys-info-card">
-          <h2 class="hud-title">SYSTEM INFO</h2>
-          <div class="sys-stats">
-            <div class="sys-row"><span>VERSION</span><span>V7.0_AUTONOMOUS</span></div>
-            <div class="sys-row"><span>ENGINE</span><span>TACTICAL_CORE_V3</span></div>
-            <div class="sys-row"><span>PASS_SKILL</span><span>ACTIVE</span></div>
-            <div class="sys-row"><span>LAST_SCAN</span><span id="lastScanTime">NOW</span></div>
+      <!-- Right Column: System Support (Reporter & Calc) -->
+      <aside class="grid-col col-right">
+        <section class="widget report-widget">
+          <div class="widget-header">
+            <span class="w-icon">🚨</span>
+            <span class="w-title">TACTICAL REPORT CENTER</span>
+          </div>
+          <div class="report-content">
+            <p class="r-desc">이상 가격 및 허위 정보 발견 시 즉시 제보 바랍니다.</p>
+            <div class="report-btns">
+              <button id="shinmungoBtn" class="r-btn shin">신문고 제보</button>
+              <button id="writePostBtn" class="r-btn detail">상세 제보 작성</button>
+            </div>
           </div>
         </section>
-      </div>
 
+        <section class="widget calc-widget">
+          <div class="widget-header">
+            <span class="w-icon">🧮</span>
+            <span class="w-title">FUEL_SAVINGS_SIMULATOR</span>
+          </div>
+          <div class="calc-body-v8">
+            <div class="input-line">
+              <label>REQUIRED_FUEL (L):</label>
+              <input type="number" id="calcFuel" value="40" class="hud-input-v8">
+            </div>
+            <div class="calc-res">
+              <span class="res-label">TOTAL BENEFIT:</span>
+              <span id="resAmount" class="res-value">+0 KRW</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="widget forum-widget">
+          <div class="widget-header">
+            <span class="w-icon">💬</span>
+            <span class="w-title">INTEL_FEED (COMMUNITY)</span>
+          </div>
+          <div id="forumList" class="forum-scroller">
+            <!-- Intel feed items -->
+          </div>
+        </section>
+      </aside>
+
+    </main>
+
+    <!-- Full Map Overlay (Pop-up or View) -->
+    <div id="mapTab" class="tab-view inactive">
+      <button id="closeMap" class="close-btn">BACK_TO_HUD</button>
+      <div id="fullMap"></div>
     </div>
 
-    <!-- Tactical Bottom Navigation -->
-    <nav class="hud-nav">
-      <button class="nav-btn active" data-tab="home">HUD</button>
-      <button class="nav-btn" data-tab="map">MAP</button>
-      <button class="nav-btn" data-tab="community">COMM</button>
-      <button class="nav-btn" data-tab="more">SYS</button>
+    <!-- Bottom Action Bar (Mobile fallback) -->
+    <nav class="system-nav">
+      <button class="nav-item active" data-tab="home">HUD_CENTER</button>
+      <button class="nav-item" id="openMap">MAP_INTEL</button>
+      <button class="nav-item" data-tab="sys">SYSTEM_LOG</button>
     </nav>
-  </main>
+  </div>
 
-  <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
