@@ -1,0 +1,165 @@
+{
+  "success": true,
+  "data": {
+    "object": "vector_store.search_results.page",
+    "search_query": "Best framework and skills for ultra-premium dark mode tactical dashboard UI UX with glassmorphism",
+    "data": [
+      {
+        "file_id": "f8ba1152884a0984c91935f9023f7504fbcb86eb85114dd552299b20adfd168f",
+        "filename": "skills/telagod-code-abyss-skills-domains-frontend-design-glassmorphism-skill-md.md",
+        "score": 0.9439714550971985,
+        "skill": {
+          "id": "telagod-code-abyss-skills-domains-frontend-design-glassmorphism-skill-md",
+          "name": "glassmorphism",
+          "author": "telagod",
+          "description": "Glassmorphism design system skill. Use when building frosted-glass UI components with blur, transparency, and layered depth effects.",
+          "githubUrl": "https://github.com/telagod/code-abyss/tree/main/skills/domains/frontend-design/glassmorphism",
+          "skillUrl": "https://skillsmp.com/skills/telagod-code-abyss-skills-domains-frontend-design-glassmorphism-skill-md",
+          "stars": 94,
+          "updatedAt": "1771336617"
+        }
+      },
+      {
+        "file_id": "ce3ed6fe739246d51a4bee1905173464cad6f836b8afee2845302a44418d1654",
+        "filename": "skills/telagod-oh-pi-pi-package-skills-glassmorphism-skill-md.md",
+        "score": 0.9403190612792969,
+        "skill": {
+          "id": "telagod-oh-pi-pi-package-skills-glassmorphism-skill-md",
+          "name": "glassmorphism",
+          "author": "telagod",
+          "description": "Glassmorphism design system skill. Use when building frosted-glass UI components with blur, transparency, and layered depth effects.",
+          "githubUrl": "https://github.com/telagod/oh-pi/tree/main/pi-package/skills/glassmorphism",
+          "skillUrl": "https://skillsmp.com/skills/telagod-oh-pi-pi-package-skills-glassmorphism-skill-md",
+          "stars": 39,
+          "updatedAt": "1771161600"
+        }
+      },
+      {
+        "file_id": "08aa6a80e9c6c394284135dc7803a6b6688f164aede2cac82804daebee8ab1a0",
+        "filename": "skills/ifiokjr-oh-pi-packages-skills-skills-glassmorphism-skill-md.md",
+        "score": 0.9389623403549194,
+        "skill": {
+          "id": "ifiokjr-oh-pi-packages-skills-skills-glassmorphism-skill-md",
+          "name": "glassmorphism",
+          "author": "ifiokjr",
+          "description": "Glassmorphism design system skill. Use when building frosted-glass UI components with blur, transparency, and layered depth effects.",
+          "githubUrl": "https://github.com/ifiokjr/oh-pi/tree/main/packages/skills/skills/glassmorphism",
+          "skillUrl": "https://skillsmp.com/skills/ifiokjr-oh-pi-packages-skills-skills-glassmorphism-skill-md",
+          "stars": 0,
+          "updatedAt": "1772960137"
+        }
+      },
+      {
+        "file_id": "2c0e0b0e30bf5c2ee5a2b233065aa80f838490a8bcc9de74ac4a5949f592497d",
+        "filename": "skills/therayz1-antigravity-skills-rules-workflows-agent-skills-frontend-glassmorphism-skill-md.md",
+        "score": 0.8765862584114075,
+        "skill": {
+          "id": "therayz1-antigravity-skills-rules-workflows-agent-skills-frontend-glassmorphism-skill-md",
+          "name": "frontend-glassmorphism",
+          "author": "Therayz1",
+          "description": "Builds premium glassmorphism (3D-like, soft blur) frontend UI components and landing pages using React/Next.js + Tailwind conventions. Use when designing modern SaaS pages, hero sections, pricing, navbars, feature grids, and animations with accessible contrast and performance constraints.",
+          "githubUrl": "https://github.com/Therayz1/antigravity-skills-rules-workflows/tree/main/.agent/skills/frontend-glassmorphism",
+          "skillUrl": "https://skillsmp.com/skills/therayz1-antigravity-skills-rules-workflows-agent-skills-frontend-glassmorphism-skill-md",
+          "stars": 29,
+          "updatedAt": "1768744716"
+        }
+      },
+      {
+        "file_id": "b658e502f18741e8c5e4bc0f3ffc8446160b1f5758cf600fb1339f29baf9a9b4",
+        "filename": "skills/ademkao-ai-cowork-ai-skills-ui-ux-skill-md.md",
+        "score": 0.7896245718002319,
+        "skill": {
+          "id": "ademkao-ai-cowork-ai-skills-ui-ux-skill-md",
+          "name": "ui-ux",
+          "author": "AdemKao",
+          "description": "UI/UX design intelligence for professional frontend development. Use when building UI, creating pages, designing components, landing pages, dashboards, or styling web applications.",
+          "githubUrl": "https://github.com/AdemKao/ai-cowork/tree/main/.ai/skills/ui-ux",
+          "skillUrl": "https://skillsmp.com/skills/ademkao-ai-cowork-ai-skills-ui-ux-skill-md",
+          "stars": 0,
+          "updatedAt": "1768111785"
+        }
+      },
+      {
+        "file_id": "fda65452e26f4517b72c8f99e935f8162ddbf1a532ae85808a8f3e52ae13a065",
+        "filename": "skills/freshtechbro-claudedesignskills-claude-skills-modern-web-design-skill-md.md",
+        "score": 0.7170946598052979,
+        "skill": {
+          "id": "freshtechbro-claudedesignskills-claude-skills-modern-web-design-skill-md",
+          "name": "modern-web-design",
+          "author": "freshtechbro",
+          "description": "Modern web design trends, principles, and implementation patterns for 2024-2025. Use this skill when designing websites, creating interactive experiences, implementing design systems, ensuring accessibility, or building performance-first interfaces. Triggers on tasks involving modern design trends, micro-interactions, scrollytelling, bold minimalism, cursor UX, glassmorphism, accessibility compliance, performance optimization, or design system architecture. References animation skills (GSAP, Framer Motion, React Spring), 3D skills (Three.js, R3F, Babylon.js), and component libraries for implementation guidance.",
+          "githubUrl": "https://github.com/freshtechbro/claudedesignskills/tree/main/.claude/skills/modern-web-design",
+          "skillUrl": "https://skillsmp.com/skills/freshtechbro-claudedesignskills-claude-skills-modern-web-design-skill-md",
+          "stars": 4,
+          "updatedAt": "1761413111"
+        }
+      },
+      {
+        "file_id": "9826021a28a2a675f71b71986482827c2ddbf1a532ae85808a8f3e52ae13a065",
+        "filename": "skills/neversight-learn-skills-dev-data-skills-md-freshtechbro-claudedesignskills-modern-web-design-skill-md.md",
+        "score": 0.7170946598052979,
+        "skill": {
+          "id": "neversight-learn-skills-dev-data-skills-md-freshtechbro-claudedesignskills-modern-web-design-skill-md",
+          "name": "modern-web-design",
+          "author": "NeverSight",
+          "description": "Modern web design trends, principles, and implementation patterns for 2024-2025. Use this skill when designing websites, creating interactive experiences, implementing design systems, ensuring accessibility, or building performance-first interfaces. Triggers on tasks involving modern design trends, micro-interactions, scrollytelling, bold minimalism, cursor UX, glassmorphism, accessibility compliance, performance optimization, or design system architecture. References animation skills (GSAP, Framer Motion, React Spring), 3D skills (Three.js, R3F, Babylon.js), and component libraries for implementation guidance.",
+          "githubUrl": "https://github.com/NeverSight/learn-skills.dev/tree/main/data/skills-md/freshtechbro/claudedesignskills/modern-web-design",
+          "skillUrl": "https://skillsmp.com/skills/neversight-learn-skills-dev-data-skills-md-freshtechbro-claudedesignskills-modern-web-design-skill-md",
+          "stars": 66,
+          "updatedAt": "1773041242"
+        }
+      },
+      {
+        "file_id": "1fbf0db1ee469b1e9d7d916c4ffd63f30a1ff1cafb28742c0727e6da64bac11b",
+        "filename": "skills/mariogutierrez-commits-claude-skills-complete-skills-glassmorphism-vitejs-skill-md.md",
+        "score": 0.616270124912262,
+        "skill": {
+          "id": "mariogutierrez-commits-claude-skills-complete-skills-glassmorphism-vitejs-skill-md",
+          "name": "glassmorphism-vitejs",
+          "author": "mariogutierrez-commits",
+          "description": "Advanced glassmorphism UI skill for Vite.js projects. Use when creating, improving, or styling interfaces with frosted-glass aesthetics — dashboards, metric cards, KPI panels, buttons, navigation, modals, tables, charts, forms, toasts, and any glass-effect UI. Also use when the user asks to beautify, modernize, or add glass effects to an existing interface. Applies the Unity Financial Network brand palette (purple",
+          "githubUrl": "https://github.com/mariogutierrez-commits/claude-skills-complete/tree/main/skills/glassmorphism-vitejs",
+          "skillUrl": "https://skillsmp.com/skills/mariogutierrez-commits-claude-skills-complete-skills-glassmorphism-vitejs-skill-md",
+          "stars": 0,
+          "updatedAt": "1772155421"
+        }
+      },
+      {
+        "file_id": "6b4fac8b60fa9ae0558fb490c5a3916b509c6dbe755d3af87014144e9fe71379",
+        "filename": "skills/00alexbear-a11y-fieldsnaps-agent-skills-ui-ux-pro-max-skill-md.md",
+        "score": 0.496378630399704,
+        "skill": {
+          "id": "00alexbear-a11y-fieldsnaps-agent-skills-ui-ux-pro-max-skill-md",
+          "name": "ui-ux-pro-max",
+          "author": "00alexbear-a11y",
+          "description": "Generates \"Unicorn\" grade UI designs. Focuses on SaaS aesthetics, glassmorphism, and premium interactions.",
+          "githubUrl": "https://github.com/00alexbear-a11y/fieldsnaps/tree/main/.agent/skills/ui-ux-pro-max",
+          "skillUrl": "https://skillsmp.com/skills/00alexbear-a11y-fieldsnaps-agent-skills-ui-ux-pro-max-skill-md",
+          "stars": 0,
+          "updatedAt": "1771225359"
+        }
+      },
+      {
+        "file_id": "4b51a7127f2ec48c1918509d32d89b9d95d2023cbc10e604941c27cc3f3c370b",
+        "filename": "skills/neversight-learn-skills-dev-data-skills-md-curiositech-some-claude-skills-dark-mode-design-expert-skill-md.md",
+        "score": 0.283839613199234,
+        "skill": {
+          "id": "neversight-learn-skills-dev-data-skills-md-curiositech-some-claude-skills-dark-mode-design-expert-skill-md",
+          "name": "dark-mode-design-expert",
+          "author": "NeverSight",
+          "description": "Master dark mode UI design with atmospheric theming, WCAG accessibility, and cross-platform best practices. Specializes in weather/sky/ocean-inspired color systems that adapt to time of day and environmental conditions.",
+          "githubUrl": "https://github.com/NeverSight/learn-skills.dev/tree/main/data/skills-md/curiositech/some_claude_skills/dark-mode-design-expert",
+          "skillUrl": "https://skillsmp.com/skills/neversight-learn-skills-dev-data-skills-md-curiositech-some-claude-skills-dark-mode-design-expert-skill-md",
+          "stars": 66,
+          "updatedAt": "1773103529"
+        }
+      }
+    ],
+    "has_more": false,
+    "next_page": null
+  },
+  "meta": {
+    "requestId": "91829b15-9bba-4604-a853-89b8cd2808f7",
+    "responseTimeMs": 6405
+  }
+}

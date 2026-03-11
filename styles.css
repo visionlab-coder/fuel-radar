@@ -1,8 +1,10 @@
 :root {
-  /* Tactical Palette V1.1 (BKIT Optimized) */
+  /* Tactical Palette V1.2 (Ultra-Premium Glass) */
   --bg-deep: #020408;
-  --glass-bg: rgba(8, 14, 26, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(8, 14, 26, 0.45);
+  --glass-bg-heavy: rgba(4, 6, 12, 0.6);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.15);
+  --glass-border-light: 1px solid rgba(255, 255, 255, 0.08);
   --neon-emerald: #10b981;
   --neon-cyan: #22d3ee;
   --neon-rose: #f43f5e;
@@ -11,8 +13,9 @@
   --font-premium: 'Pretendard Variable', -apple-system, sans-serif;
   --font-mono: 'Space Grotesk', 'JetBrains Mono', monospace;
 
-  --glow-emerald: 0 0 20px rgba(16, 185, 129, 0.25);
-  --radius-v1: 14px;
+  --glow-emerald: 0 0 20px rgba(16, 185, 129, 0.3);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --radius-v1: 16px;
 }
 
 .inactive {
@@ -36,13 +39,14 @@ body {
   min-height: 100vh;
 }
 
-/* Utility: Glassmorphism - Reuse for Performance */
+/* Utility: Ultra-Premium Glassmorphism */
 .glass-panel {
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  border: var(--glass-border);
   border-radius: var(--radius-v1);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  box-shadow: var(--glass-shadow);
 }
 
 /* Background Layers - Static & Performant */
@@ -95,16 +99,21 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  box-shadow: var(--glow-emerald);
+  background: var(--glass-bg);
+  border: var(--glass-border);
+  border-radius: var(--radius-v1);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  box-shadow: var(--glass-shadow);
 }
 
-.system-header,
 .widget {
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  border: var(--glass-border);
   border-radius: var(--radius-v1);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  box-shadow: var(--glass-shadow);
 }
 
 /* Symbolic extend - implemented as manual classes in HTML */
@@ -158,11 +167,11 @@ body {
 }
 
 .widget-header {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--glass-border);
+  padding: 1rem 1.25rem;
+  border-bottom: var(--glass-border-light);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .w-title {
@@ -184,8 +193,8 @@ body {
 
 /* Station List Item */
 .st-item-v8 {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  border: var(--glass-border-light);
   padding: 1.25rem;
   border-radius: 10px;
   display: flex;
@@ -225,46 +234,80 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 80px;
-    background: rgba(4, 6, 12, 0.85);
+    height: 90px;
+    background: var(--glass-bg-heavy);
     backdrop-filter: blur(40px);
-    border-top: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(40px);
+    border-top: var(--glass-border);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
     justify-content: space-around;
     align-items: center;
+    padding-bottom: env(safe-area-inset-bottom, 15px);
+    /* 모바일 하단 안전영역 확보 */
   }
 }
 
 .nav-item {
   color: #64748b;
   font-weight: 900;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   background: none;
   border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-item.active {
   color: var(--neon-emerald);
-  text-shadow: 0 0 10px var(--neon-emerald);
+  text-shadow: 0 0 15px var(--neon-emerald);
+  background: rgba(16, 185, 129, 0.1);
 }
 
 /* Reporting Buttons */
 .r-btn {
-  padding: 0.8rem;
-  border-radius: 8px;
-  font-weight: 950;
-  font-size: 0.85rem;
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 0.9rem;
   border: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.r-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .r-btn.shin {
-  background: rgba(30, 41, 59, 0.8);
-  color: #fff;
-  border: 1px solid var(--glass-border);
+  background: rgba(30, 41, 59, 0.6);
+  color: #f1f5f9;
+  border: var(--glass-border-light);
+  backdrop-filter: blur(10px);
+}
+
+.r-btn.shin:hover {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .r-btn.detail {
   background: var(--neon-orange);
   color: #000;
+  box-shadow: 0 0 15px rgba(251, 146, 60, 0.4);
+}
+
+.r-btn.detail:hover {
+  background: #f97316;
+  box-shadow: 0 0 25px rgba(251, 146, 60, 0.6);
 }
 
 /* Calculator Fix */
@@ -285,22 +328,41 @@ body {
 .hud-mini-btn,
 .hud-select,
 .chip {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--glass-border);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+  border: var(--glass-border-light);
+  color: #e2e8f0;
   font-family: var(--font-mono);
   font-weight: 900;
-  font-size: 0.7rem;
-  border-radius: 6px;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.hud-mini-btn:hover,
+.hud-select:hover,
+.chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .hud-mini-btn.primary {
-  background: var(--neon-emerald);
-  color: #000;
-  border: none;
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--neon-emerald);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.hud-mini-btn.primary:hover {
+  background: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
 }
 
 .chip.active {
-  background: var(--neon-cyan);
-  color: #000;
+  background: rgba(34, 211, 238, 0.15);
+  color: var(--neon-cyan);
+  border: 1px solid rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
 }

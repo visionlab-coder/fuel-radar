@@ -1,0 +1,74 @@
+{
+  "success": true,
+  "data": {
+    "skills": [
+      {
+        "id": "okwinds-miscellany-agent-skills-ui-ux-spec-genome-skill-md",
+        "name": "ui-ux-spec-genome",
+        "author": "okwinds",
+        "description": "A portable, reproducible UI/UX spec standard: scan a frontend repo for UI sources and scaffold a ui-ux-spec documentation bundle (tokens, global styles, components, patterns, pages, a11y). Also supports plan-driven UI-only refactors based on an existing ui-ux-spec. Excludes business logic and domain workflows.",
+        "githubUrl": "https://github.com/okwinds/miscellany/tree/main/agent/skills/ui-ux-spec-genome",
+        "skillUrl": "https://skillsmp.com/skills/okwinds-miscellany-agent-skills-ui-ux-spec-genome-skill-md",
+        "stars": 34,
+        "updatedAt": "1773053426"
+      },
+      {
+        "id": "tomada1114-tomada-claude-plugins-agile-tools-skills-ui-ux-designing-skill-md",
+        "name": "ui-ux-designing",
+        "author": "tomada1114",
+        "description": "Design UI/UX concepts for apps and web services through systematic research and questioning. Use PROACTIVELY when designing app interfaces, determining visual direction, creating design systems, choosing color schemes, or establishing UX patterns. Examples: <example>Context: User wants to design an app user: 'UI/UXのデザインコンセプトを決めたい' assistant: 'I will use ui-ux-designing skill' <commentary>Triggered by design concept request</commentary></example> <example>Context: User building new feature user: 'この機能の見た目どうしよう' assistant: 'I will use ui-ux-designing skill' <commentary>Triggered by visual design question</commentary></example>",
+        "githubUrl": "https://github.com/tomada1114/tomada-claude-plugins/tree/main/agile-tools/skills/ui-ux-designing",
+        "skillUrl": "https://skillsmp.com/skills/tomada1114-tomada-claude-plugins-agile-tools-skills-ui-ux-designing-skill-md",
+        "stars": 3,
+        "updatedAt": "1767801170"
+      },
+      {
+        "id": "better984-dwquant-cursor-skills-install-ui-ux-pro-max-skill-md",
+        "name": "install-ui-ux-pro-max",
+        "author": "Better984",
+        "description": "Install the ui-ux-pro-max skill from GitHub for Cursor. Use when the user wants to install ui-ux-pro-max skill, or when they mention installing UI/UX design intelligence tools.",
+        "githubUrl": "https://github.com/Better984/DWQuant/tree/main/.cursor/skills/install-ui-ux-pro-max",
+        "skillUrl": "https://skillsmp.com/skills/better984-dwquant-cursor-skills-install-ui-ux-pro-max-skill-md",
+        "stars": 0,
+        "updatedAt": "1769968991"
+      },
+      {
+        "id": "nicepkg-ai-workflow-workflows-marketing-pro-workflow-claude-skills-ui-ux-audit-skill-md",
+        "name": "ui-ux-audit",
+        "author": "nicepkg",
+        "description": "Mandatory audit workflow for UI/UX changes that reads current state FIRST, checks for redundancy, respects clean design philosophy, and identifies genuine gaps before implementation. Auto-invoked when user mentions UI, UX, design, layout, homepage, page improvements, visual changes, or interface modifications.",
+        "githubUrl": "https://github.com/nicepkg/ai-workflow/tree/main/workflows/marketing-pro-workflow/.claude/skills/ui-ux-audit",
+        "skillUrl": "https://skillsmp.com/skills/nicepkg-ai-workflow-workflows-marketing-pro-workflow-claude-skills-ui-ux-audit-skill-md",
+        "stars": 127,
+        "updatedAt": "1768763382"
+      },
+      {
+        "id": "neversight-learn-skills-dev-data-skills-md-gaebalai-itda-sdd-ui-ux-designer-skill-md",
+        "name": "ui-ux-designer",
+        "author": "NeverSight",
+        "description": "Copilot agent that assists with user interface and experience design, wireframes, prototypes, design systems, and usability testing\n\nTrigger terms: UI design, UX design, wireframe, mockup, prototype, user interface, user experience, design system, component library, accessibility, responsive design\n\nUse when: User requests involve ui ux designer tasks.",
+        "githubUrl": "https://github.com/NeverSight/learn-skills.dev/tree/main/data/skills-md/gaebalai/itda-sdd/ui-ux-designer",
+        "skillUrl": "https://skillsmp.com/skills/neversight-learn-skills-dev-data-skills-md-gaebalai-itda-sdd-ui-ux-designer-skill-md",
+        "stars": 66,
+        "updatedAt": "1771496821"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 5,
+      "total": 6,
+      "totalPages": 2,
+      "hasNext": true,
+      "hasPrev": false,
+      "totalIsExact": false
+    },
+    "filters": {
+      "search": "UI UX",
+      "sortBy": "stars"
+    }
+  },
+  "meta": {
+    "requestId": "49cc60d3-f593-4736-a4a4-1d10efb67d7b",
+    "responseTimeMs": 556
+  }
+}
