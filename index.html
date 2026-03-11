@@ -4,12 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>기름따라 졸졸졸 - Tactical Fuel HUD V6.0</title>
+  <title>기름따라 졸졸졸 - Tactical Fuel Dashboard V7.0</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css">
+  <!-- YouTube Favored High-Visibility Fonts (Pretendard Variable) -->
   <link rel="stylesheet" as="style" crossorigin
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
 </head>
@@ -21,16 +22,16 @@
   <div class="bg-glow-b"></div>
 
   <main class="app-container">
-    <!-- Top Tactical Header -->
+    <!-- Top Tactical Header: Branded Version -->
     <header class="hud-header">
       <div class="header-main">
         <div class="header-logo-group">
-          <span class="hud-label">SYSTEM_STATUS: OPERATIONAL</span>
-          <h1 class="hud-title">REAL-TIME FUEL PRICE CENTER <span class="v-badge">V6.0</span></h1>
+          <span class="hud-label">SYSTEM_STATUS: AUTONOMOUS_V7</span>
+          <h1 class="hud-logo-text">기름따라 졸졸졸 <span class="v-badge">V7</span></h1>
         </div>
         <div class="header-location">
           <span class="loc-icon">🛰️</span>
-          <span id="locationText" class="loc-val">GPS_SYNC_WAITING...</span>
+          <span id="locationText" class="loc-val">GPS_SYNCING_WAIT...</span>
         </div>
       </div>
       <div class="header-actions">
@@ -45,7 +46,7 @@
       <!-- HOME TAB: Mission Control -->
       <div id="homeTab" class="tab-pane active">
 
-        <!-- Hero HUD Section: Radar & Report -->
+        <!-- Hero HUD Section: Radar & Integrated Reporting -->
         <section class="hud-hero">
           <div class="radar-module">
             <div class="canvas-container">
@@ -62,14 +63,22 @@
 
           <div class="quick-report-module">
             <div class="report-header">
-              <span class="report-badge">QUICK REPORT</span>
+              <span class="report-badge">INTEGRATED_REPORT</span>
               <p class="report-desc">이상 가격 발견 시 즉시 신고하세요.</p>
             </div>
-            <button id="reportBtn" class="report-high-cta">
-              <span class="cta-icon">🚨</span>
-              <span>얌채 주유소 신고</span>
-            </button>
-            <button class="report-link" onclick="state.activeTab='community'; updateUI();">상세 제보 게시판</button>
+
+            <!-- Parallel Reporting UI -->
+            <div class="report-action-grid">
+              <button id="shinmungoBtn" class="report-cta-v7 shinmungo" onclick="alert('신문고 제보 시스템 가동')">
+                <span class="cta-icon">📜</span>
+                <span>신문고 제보</span>
+              </button>
+              <button id="reportBtn" class="report-cta-v7 detail" onclick="state.activeTab='community'; updateUI();">
+                <span class="cta-icon">📝</span>
+                <span>상세 제보</span>
+              </button>
+            </div>
+            <p class="report-footer">깨끗한 유가 문화를 함께 만듭니다.</p>
           </div>
         </section>
 
@@ -120,7 +129,6 @@
             </div>
           </div>
 
-          <!-- Tactical Filter Icons -->
           <div class="filter-icons-row">
             <button class="filter-chip" data-filter="wash">🧼 세차장</button>
             <button class="filter-chip" data-filter="mart">🏪 편의점</button>
@@ -158,9 +166,10 @@
         <section class="sys-info-card">
           <h2 class="hud-title">SYSTEM INFO</h2>
           <div class="sys-stats">
-            <div class="sys-row"><span>VERSION</span><span>V6.0_STABLE</span></div>
-            <div class="sys-row"><span>ENGINE</span><span>TACTICAL_RADAR_V2</span></div>
-            <div class="sys-row"><span>BUILD</span><span>2026-03-11T21:49</span></div>
+            <div class="sys-row"><span>VERSION</span><span>V7.0_AUTONOMOUS</span></div>
+            <div class="sys-row"><span>ENGINE</span><span>TACTICAL_CORE_V3</span></div>
+            <div class="sys-row"><span>PASS_SKILL</span><span>ACTIVE</span></div>
+            <div class="sys-row"><span>LAST_SCAN</span><span id="lastScanTime">NOW</span></div>
           </div>
         </section>
       </div>
