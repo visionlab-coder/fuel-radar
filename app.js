@@ -696,7 +696,7 @@ function renderGrowthPanels(stationsPayload, trendPayload) {
   )} · ${compareDays}일 대비 ${formatSignedWon(delta)} (${pct || 0}%)`;
 
   const fuelLabel = els.fuelSelect.value === "diesel" ? "경유" : "휘발유";
-  state.lastShareText = `[주유 레이더] 오늘의 절약 정보\n\n📌 ${fuelLabel} 최저가: ${cheapest.name} (${wonPerLiter(cheapest.price)})\n💰 예상 절약: ${savedWon.toLocaleString("ko-KR")}원 (${liters}L 기준)\n📈 ${compareDays}일 전 대비: ${formatSignedWon(delta)}\n\n지금 바로 가장 가까운 최저가를 확인하세요!`;
+  state.lastShareText = `[기름따라 졸졸졸] 오늘의 절약 정보\n\n📌 ${fuelLabel} 최저가: ${cheapest.name} (${wonPerLiter(cheapest.price)})\n💰 예상 절약: ${savedWon.toLocaleString("ko-KR")}원 (${liters}L 기준)\n📈 ${compareDays}일 전 대비: ${formatSignedWon(delta)}\n\n지금 바로 가장 가까운 최저가를 확인하세요!`;
 
   const series = Array.isArray(trendPayload?.series) ? trendPayload.series : [];
   let maxRise = null;
@@ -738,7 +738,7 @@ async function shareCard() {
   try {
     if (navigator.share) {
       await navigator.share({
-        title: "주유 레이더 절약 정보",
+        title: "기름따라 졸졸졸 절약 정보",
         text: state.lastShareText
       });
       state.shareCount += 1;

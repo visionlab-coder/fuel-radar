@@ -31,14 +31,16 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: "lat,lng query is required" });
     }
 
-    // 오피넷 API 호출 (WGS84 좌표계 coord=3 사용)
+    // WGS84 위경도를 오피넷 표준인 KATEC(TM) 좌표로 변환
+    const katec = wgs84ToKatec(lat, lng);
+
+    // 오피넷 API 호출 (aroundAll.do는 KATEC 좌표만 지원)
     const rows = await fetchOpinet("aroundAll.do", {
-      x: lng, // 경도 (126.x)
-      y: lat, // 위도 (37.x)
+      x: katec.x,
+      y: katec.y,
       radius: Math.round(radiusKm * 1000),
       sort: 1,
-      prodcd: fuelToProdcd(fuel),
-      coord: 3 // WGS84 좌표계 명시
+      prodcd: fuelToProdcd(fuel)
     }, { cacheTtlSec: 120 });
 
     const stations = rows
