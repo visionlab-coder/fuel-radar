@@ -30,13 +30,13 @@ const state = {
   stationMarkers: []
 };
 
-/* 유틸리티 */
+/* --- Utilities --- */
 function wonPerLiter(price) {
   if (price === null || price === undefined || Number.isNaN(price)) return "-";
   return Number(price).toLocaleString("ko-KR");
 }
 
-/* 실시간 미니맵 */
+/* --- Realtime Map Logic --- */
 function initMap(lat, lng) {
   if (state.map) return;
   const mapEl = document.getElementById("miniMap");
@@ -45,7 +45,7 @@ function initMap(lat, lng) {
   state.map = L.map("miniMap", {
     center: [lat, lng],
     zoom: 14,
-    zoomControl: true,
+    zoomControl: false, // 터치 중심 UX를 위해 숨김
     attributionControl: false
   });
 
@@ -57,14 +57,13 @@ function initMap(lat, lng) {
 
   const userIcon = L.divIcon({
     className: "",
-    html: `<div style="width:20px;height:20px;background:var(--neon-cyan);border:3px solid #fff;border-radius:50%;box-shadow:0 0 15px var(--neon-cyan);"></div>`,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10]
+    html: `<div class="pulse-dot" style="width:16px;height:16px;background:var(--neon-cyan);border:2px solid #fff;border-radius:50%;box-shadow:0 0 15px var(--neon-cyan);"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
   });
 
   state.userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(state.map);
-  setTimeout(() => state.map.invalidateSize(), 200);
-  if (els.mapStatus) els.mapStatus.textContent = "LIVE";
+  setTimeout(() => state.map.invalidateSize(), 300);
 }
 
 function updateUserMarkerOnMap(lat, lng) {
@@ -87,38 +86,39 @@ function updateStationMarkersOnMap(stations) {
         <div style="
           background: ${isTop ? "var(--neon-magenta)" : "var(--panel)"};
           color: #fff;
-          padding: 4px 8px;
+          padding: 4px 10px;
           border: 1px solid ${isTop ? "#fff" : "var(--neon-cyan)"};
-          border-radius: 6px;
-          font-weight: 800;
+          border-radius: 8px;
+          font-weight: 900;
           font-size: 11px;
-          box-shadow: 0 0 10px ${isTop ? "rgba(255,0,255,0.5)" : "rgba(0,243,255,0.3)"};
+          box-shadow: 0 4px 12px ${isTop ? "rgba(244,114,182,0.5)" : "rgba(34,211,238,0.3)"};
           white-space: nowrap;
-          transform: translate(-50%, -120%);
+          transform: translate(-50%, -130%);
         ">${wonPerLiter(s.price)}</div>`,
       iconAnchor: [0, 0]
     });
     const marker = L.marker([s.lat, s.lng], { icon }).addTo(state.map);
-    marker.bindPopup(`<strong>${s.name}</strong><br>${wonPerLiter(s.price)}원/L`);
+    marker.bindPopup(`<strong>${s.name}</strong><br>${wonPerLiter(s.price)}원`);
     state.stationMarkers.push(marker);
   });
 }
 
-/* 렌더링 로직 */
+/* --- Premium Rendering Logic --- */
 function renderStations(stations) {
   const displayStations = Array.isArray(stations) ? [...stations].sort((a, b) => a.price - b.price) : [];
   els.stationList.innerHTML = "";
 
   if (displayStations.length === 0) {
-    els.stationList.innerHTML = `<div style="text-align:center; padding:2rem; grid-column:1/-1; opacity:0.6;">주변 주유소 정보를 찾을 수 없습니다.</div>`;
+    els.stationList.innerHTML = `<div style="text-align:center; padding:3rem; opacity:0.5; font-weight:700;">주변에 탐지된 주유소가 없습니다.</div>`;
     els.loadMoreBtn.classList.add("hidden");
     updateStationMarkersOnMap([]);
     return;
   }
 
   const visibleStations = state.isExpanded ? displayStations : displayStations.slice(0, 5);
+
   els.stationList.innerHTML = visibleStations.map((s, idx) => `
-    <div class="station-item" onclick="window.miniMap.setView([${s.lat}, ${s.lng}], 16)" style="animation-delay: ${idx * 0.05}s">
+    <div class="station-item" onclick="window.miniMap.setView([${s.lat}, ${s.lng}], 16)" style="animation-delay: ${idx * 0.1}s">
       <div class="station-info">
         <span class="st-brand">${s.brand || "기타"}</span>
         <span class="st-name">${s.name}</span>
@@ -133,14 +133,12 @@ function renderStations(stations) {
 
   if (displayStations.length > 5 && !state.isExpanded) {
     els.loadMoreBtn.classList.remove("hidden");
-  } else if (state.isExpanded) {
-    els.loadMoreBtn.classList.add("hidden");
   } else {
     els.loadMoreBtn.classList.add("hidden");
   }
 
   renderRadarBlips(displayStations, Number(els.radiusInput.value));
-  setRadarState(`반경 ${els.radiusInput.value}km 내 ${displayStations.length}개 탐지`, true);
+  setRadarState(`반경 ${els.radiusInput.value}km 내 ${displayStations.length}개 탐미 완료`, true);
   updateStationMarkersOnMap(visibleStations);
 }
 
@@ -152,28 +150,39 @@ function renderStats(stationsPayload, trendPayload) {
     els.avgPrice.textContent = Number(cheapest.price).toLocaleString();
     const fuelLabel = els.fuelSelect.value === "diesel" ? "경유" : "휘발유";
     const labelEl = document.querySelector(".stat-label");
-    if (labelEl) labelEl.textContent = `${fuelLabel} 최저가`;
+    if (labelEl) labelEl.textContent = `실시간 추천 ${fuelLabel}`;
   }
 
-  const deltaText = delta === 0 ? "보합" : delta > 0 ? `▲ ${delta}원` : `▼ ${Math.abs(delta)}원`;
+  const deltaText = delta === 0 ? "가격 보합" : delta > 0 ? `▲ ${delta}원 급등` : `▼ ${Math.abs(delta)}원 하락`;
   els.priceDelta.textContent = deltaText;
   els.priceDelta.style.color = delta > 0 ? "var(--danger)" : "var(--success)";
 
-  const savings = Math.abs(delta) * 10 * 30 || 15400;
-  els.potentialSavings.textContent = savings.toLocaleString();
+  // 초프리미엄 감성의 절약액 계산 (매달 1500km 주행, 연비 12km/L 가정 시 리터당 delta만큼의 차이)
+  const monthlyLiters = 125; // 1500 / 12
+  const savings = Math.max(5000, Math.abs(delta) * monthlyLiters);
+  els.potentialSavings.textContent = Math.round(savings).toLocaleString();
 }
 
 function renderRadarBlips(stations, radiusKm) {
   if (!els.radarBlips) return;
   els.radarBlips.innerHTML = "";
-  stations.slice(0, 15).forEach(s => {
-    const angle = Math.random() * 360;
-    const distFactor = Math.min(1, s.distance / radiusKm);
-    const distPx = distFactor * 100; // 레이더 중심에서 100px이 최대
+  stations.slice(0, 12).forEach((s, i) => {
+    const angle = i * (360 / Math.min(stations.length, 12)) + Math.random() * 20;
+    const distFactor = Math.min(0.9, (s.distance / radiusKm) * 0.8 + 0.1);
+    const distPx = distFactor * 110;
+
     const blip = document.createElement("div");
     blip.className = "radar-blip";
-    blip.style.left = `calc(50% + ${Math.cos(angle) * distPx}px)`;
-    blip.style.top = `calc(50% + ${Math.sin(angle) * distPx}px)`;
+    blip.style.position = "absolute";
+    blip.style.width = "6px";
+    blip.style.height = "6px";
+    blip.style.background = "var(--neon-cyan)";
+    blip.style.borderRadius = "50%";
+    blip.style.boxShadow = "0 0 10px var(--neon-cyan)";
+    blip.style.left = `calc(50% + ${Math.cos(angle * Math.PI / 180) * distPx}px)`;
+    blip.style.top = `calc(50% + ${Math.sin(angle * Math.PI / 180) * distPx}px)`;
+    blip.style.animation = `pulse 2s infinite ${Math.random() * 2}s`;
+
     els.radarBlips.appendChild(blip);
   });
 }
@@ -185,13 +194,13 @@ function setRadarState(text, active) {
   }
 }
 
-/* 데이터 호출 */
+/* --- Data Fetching --- */
 async function fetchData(manual = false) {
   if (state.refreshing) return;
   if (!state.lat || !state.lng) return;
 
   state.refreshing = true;
-  setRadarState("실시간 스캔 중...", true);
+  setRadarState("Deep Scanning...", true);
 
   const fuel = els.fuelSelect.value;
   const radiusKm = Number(els.radiusInput.value);
@@ -202,19 +211,18 @@ async function fetchData(manual = false) {
     let trendPayload;
 
     if (DEMO_MODE) {
+      // Premium Demo Data
       stationsPayload = {
-        updatedAt: new Date().toISOString(),
-        fuel,
-        radiusKm,
-        total: 5,
-        cheapest: { name: "강남 최저가 주유소", price: 1540, distance: 0.8, lat: state.lat + 0.005, lng: state.lng + 0.005, brand: "SK" },
+        cheapest: { name: "강남 프리미엄 주유소", price: 1542, distance: 0.7, lat: state.lat + 0.004, lng: state.lng + 0.003, brand: "SK" },
         stations: [
-          { name: "강남 최저가 주유소", price: 1540, distance: 0.8, lat: state.lat + 0.005, lng: state.lng + 0.005, brand: "SK", address: "서울 강남구 테헤란로 123" },
-          { name: "역삼 오일스테이션", price: 1565, distance: 1.2, lat: state.lat - 0.004, lng: state.lng + 0.008, brand: "GS", address: "서울 강남구 역삼로 456" },
-          { name: "서초 하이웨이", price: 1590, distance: 2.5, lat: state.lat + 0.012, lng: state.lng - 0.003, brand: "S-OIL", address: "서울 서초구 반포로 789" }
+          { name: "강남 프리미엄 주유소", price: 1542, distance: 0.7, lat: state.lat + 0.004, lng: state.lng + 0.003, brand: "SK", address: "서울 강남구 테헤란로 123" },
+          { name: "네온 오일뱅크", price: 1568, distance: 1.1, lat: state.lat - 0.005, lng: state.lng + 0.006, brand: "GS", address: "서울 강남구 역삼동 456" },
+          { name: "사이버 에스오일", price: 1585, distance: 2.3, lat: state.lat + 0.011, lng: state.lng - 0.004, brand: "S-OIL", address: "서울 서초구 서초대로 789" },
+          { name: "미래형 주유소", price: 1610, distance: 3.5, lat: state.lat - 0.015, lng: state.lng - 0.012, brand: "현대", address: "서울 강남구 도곡로 321" },
+          { name: "졸졸졸 스테이션", price: 1625, distance: 4.8, lat: state.lat + 0.02, lng: state.lng + 0.015, brand: "기타", address: "서울 강남구 압구정로 654" }
         ]
       };
-      trendPayload = { delta: -15, deltaPct: -1.2, compareDays: 14 };
+      trendPayload = { delta: -22, deltaPct: -1.4 };
     } else {
       const [res1, res2] = await Promise.all([
         fetch(`/api/stations?lat=${state.lat}&lng=${state.lng}&radiusKm=${radiusKm}&fuel=${fuel}&_t=${nonce}`),
@@ -232,7 +240,7 @@ async function fetchData(manual = false) {
     initMap(state.lat, state.lng);
   } catch (err) {
     console.error(err);
-    setRadarState("데이터 요청 실패", false);
+    setRadarState("통신 환경이 불안정합니다.", false);
   } finally {
     state.refreshing = false;
   }
@@ -245,11 +253,20 @@ function resetAutoRefresh() {
   }
 }
 
-/* 초기화 */
+/* --- Initialization --- */
 async function init() {
-  // 이벤트 리스너
-  els.fuelSelect.addEventListener("change", () => fetchData(true));
-  els.radiusInput.addEventListener("change", () => fetchData(true));
+  window.miniMap = null; // Leaflet 접근용 전역 노출 가능성 대비
+
+  els.fuelSelect.addEventListener("change", () => {
+    state.isExpanded = false;
+    fetchData(true);
+  });
+
+  els.radiusInput.addEventListener("change", () => {
+    state.isExpanded = false;
+    fetchData(true);
+  });
+
   els.autoRefresh.addEventListener("change", resetAutoRefresh);
 
   els.loadMoreBtn.addEventListener("click", () => {
@@ -258,36 +275,38 @@ async function init() {
   });
 
   els.shareBtn.addEventListener("click", async () => {
-    const text = `[기름따라 졸졸졸] 오늘의 절약 정보\n최저가: ${els.avgPrice.textContent}원\n예상 절약액: ${els.potentialSavings.textContent}원\n지금 바로 지도를 확인하세요!`;
+    const text = `[기름따라 졸졸졸] 초정밀 유가 분석 결과\n⛽ 현재 최저가: ${els.avgPrice.textContent}원\n💎 예상 절약: ${els.potentialSavings.textContent}원\n지금 바로 지도를 확인하세요!`;
     if (navigator.share) {
-      await navigator.share({ title: "기름따라 졸졸졸", text });
+      try {
+        await navigator.share({ title: "기름따라 졸졸졸", text });
+      } catch (e) { console.log("Share cancelled"); }
     } else {
-      alert("공유 기능이 지원되지 않는 브라우저입니다.\n\n" + text);
+      alert("공유 문구가 복사되었습니다:\n\n" + text);
     }
   });
 
-  // 위치 추적
+  // Geolocation Logic
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       state.lat = Number(pos.coords.latitude.toFixed(6));
       state.lng = Number(pos.coords.longitude.toFixed(6));
-      els.locationText.textContent = "현재 위치 동기화 완료";
+      els.locationText.textContent = "GPS Connected";
       await fetchData(true);
 
       navigator.geolocation.watchPosition((p) => {
         state.lat = Number(p.coords.latitude.toFixed(6));
         state.lng = Number(p.coords.longitude.toFixed(6));
         updateUserMarkerOnMap(state.lat, state.lng);
-      });
+      }, null, { enableHighAccuracy: true });
     }, () => {
       if (DEMO_MODE) {
         state.lat = 37.5665;
         state.lng = 126.978;
-        els.locationText.textContent = "데모 활성: 서울 시청";
+        els.locationText.textContent = "Demo Mode: Seoul";
         fetchData(true);
       } else {
-        els.locationText.textContent = "위치 권한 대기 중...";
-        setRadarState("위치 권한 허용이 필요합니다.", false);
+        els.locationText.textContent = "Waiting for GPS...";
+        setRadarState("위치 권한을 허용해 주세요.", false);
       }
     });
   }
