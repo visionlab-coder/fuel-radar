@@ -1,0 +1,12 @@
+{
+  "name": "fuel-radar",
+  "version": "2.0.0",
+  "description": "실시간 위치기반 주유 레이더 앱",
+  "main": "app.js",
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
