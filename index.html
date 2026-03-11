@@ -4,154 +4,214 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>기름따라 졸졸졸 - Tactical HUD v1.1 (Optimized)</title>
+  <title>기름따라 졸졸졸</title>
 
-  <!-- Critical Asset Preload -->
-  <link rel="preload" as="style"
-    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="tactical-os-v8">
-  <div class="hud-scanning-grid"></div>
-  <div class="ambient-glow g-1"></div>
-  <div class="ambient-glow g-2"></div>
-
-  <div class="dashboard-wrapper">
-    <header class="system-header">
-      <div class="brand-logic">
-        <div class="brand-logo">기름따라 졸졸졸</div>
-        <div class="system-tag">TACTICAL_FUEL_HUD_V1.1 // PERFORMANCE_OPTIMIZED</div>
-      </div>
-      <div class="system-readouts">
-        <div class="readout-box">
-          <span class="label">LOCATION</span>
-          <span id="locationText" class="value">SYNCING...</span>
-        </div>
-        <div class="readout-box">
-          <span class="label">SYSTEM TIME</span>
-          <span id="sysTime" class="value">00:00:00</span>
-        </div>
-        <div class="readout-box action-box">
-          <button id="searchBtn" class="hud-mini-btn">SEARCH</button>
-          <button id="refreshBtn" class="hud-mini-btn primary">SYNC</button>
-        </div>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="subtitle">실시간 유가 센터 V2.0</div>
+      <h1 class="title">기름따라 졸졸졸</h1>
+      <div class="location-badge">
+        <span class="dot-teal"></span>
+        <span class="dot-red"></span>
+        <span id="locDisplay">모충동</span>
       </div>
     </header>
 
-    <main class="dashboard-grid">
-      <aside class="grid-col col-left">
-        <section class="widget radar-widget">
-          <div class="widget-header">
-            <span class="w-icon">📡</span>
-            <span class="w-title">SCANNER</span>
-            <span class="w-status">INTEL_ON</span>
+    <main class="main-content">
+      <!-- Top Grid: Radar & Alert -->
+      <div class="layout-grid-2">
+        <div class="panel flex-row radar-panel">
+          <div class="radar-visual">
+            <canvas id="radarCanvas" width="120" height="120"></canvas>
           </div>
-          <div class="canvas-wrap">
-            <canvas id="radarCanvas"></canvas>
-            <div class="radar-overlay-data l">LAT: <span id="curLat">0.0</span></div>
-            <div class="radar-overlay-data r">LNG: <span id="curLng">0.0</span></div>
+          <div class="radar-info">
+            <p class="text-secondary label-text">내 주변 실시간 스캔</p>
+            <p class="text-primary value-text">반경 <span id="rdrRadius">3km</span> 내 <span id="rdrCount">30</span>개 포착
+            </p>
           </div>
-          <div class="radar-stats">
-            <div class="stat-item"><span class="l">TARGETS:</span><span id="targetCount" class="v">0</span></div>
-            <div class="stat-item"><span class="l">SCAN_RATE:</span><span class="v">60Hz</span></div>
-          </div>
-        </section>
+        </div>
 
-        <section class="widget trend-widget">
-          <div class="widget-header">
-            <span class="w-icon">📊</span>
-            <span class="w-title">MARKET TREND</span>
+        <div class="panel alert-panel">
+          <p class="text-secondary label-text">빠른 제보</p>
+          <p class="text-primary desc-text">레이더 탐지 중 이상 가격을<br>발견하면 즉시 신고하세요.</p>
+          <button class="btn btn-orange w-full">얌체 주유소 신고하기</button>
+          <div class="text-right mt-2">
+            <a href="#" class="link-text">신고 폼으로 이동</a>
           </div>
-          <div id="trendHistory" class="technical-list" style="padding:1rem;"></div>
-        </section>
-      </aside>
-
-      <div class="grid-col col-main">
-        <section class="widget list-widget">
-          <div class="widget-header">
-            <div class="header-group">
-              <span class="w-icon">🧭</span>
-              <span class="w-title">STATIONS</span>
-            </div>
-            <div class="filter-group" style="margin-left:auto; display:flex; gap:0.5rem;">
-              <select id="fuelSelect" class="hud-select">
-                <option value="gasoline">휘발유</option>
-                <option value="diesel">경유</option>
-              </select>
-              <select id="radiusSelect" class="hud-select">
-                <option value="1">1KM</option>
-                <option value="3" selected>3KM</option>
-                <option value="5">5KM</option>
-              </select>
-            </div>
-          </div>
-          <div class="filter-chips-v8" style="padding:0.75rem 1rem; display:flex; gap:0.5rem;">
-            <button class="chip" data-filter="wash">🫧 세차</button>
-            <button class="chip" data-filter="mart">🛒 편의점</button>
-          </div>
-          <div id="stationList" class="station-scroller" style="padding:0 1.25rem 1.25rem;"></div>
-        </section>
+        </div>
       </div>
 
-      <aside class="grid-col col-right">
-        <section class="widget report-widget">
-          <div class="widget-header">
-            <span class="w-icon">🛡️</span>
-            <span class="w-title">REPORTS</span>
+      <!-- Search Box -->
+      <div class="panel search-panel mt-4">
+        <p class="text-secondary label-text">위치 검색</p>
+        <div class="search-inputs">
+          <input type="text" id="searchInput" value="청주시 모충동" class="input-field">
+          <button id="searchBtn" class="btn btn-teal">검색 위치 적용</button>
+          <button id="gpsBtn" class="btn btn-outline-teal">내 위치 다시 잡기</button>
+        </div>
+        <p class="status-success mt-2">
+          <span class="check-icon">✅</span> 위치 확인 성공. 레이더가 즉시 가동됩니다.
+        </p>
+      </div>
+
+      <!-- Filters -->
+      <div class="panel filter-panel mt-4">
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label class="text-secondary mb-1">유종</label>
+            <select class="input-select" id="fuelType">
+              <option>휘발유</option>
+              <option>경유</option>
+            </select>
           </div>
-          <div class="report-content" style="padding:1.25rem;">
-            <p class="r-desc" style="margin:0 0 1rem; font-size:0.85rem; color:#94a3b8;">이상 가격 발견 시 즉시 제보 바랍니다.</p>
-            <div class="report-btns" style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-              <button id="shinmungoBtn" class="r-btn shin">📜 신문고</button>
-              <button id="writePostBtn" class="r-btn detail">📝 상세 제보</button>
+          <div class="filter-group">
+            <label class="text-secondary mb-1">비교 기준</label>
+            <select class="input-select">
+              <option>3일 전</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="text-secondary mb-1">리스트 기준</label>
+            <select class="input-select">
+              <option>가격순</option>
+            </select>
+          </div>
+          <div class="filter-group span-2">
+            <label class="text-secondary mb-1">반경</label>
+            <div class="slider-wrap">
+              <input type="range" class="input-slider" min="1" max="10" value="3" id="radiusSlider">
+              <span class="radius-text" id="radiusText">3km</span>
             </div>
           </div>
-        </section>
-
-        <section class="widget calc-widget">
-          <div class="widget-header">
-            <span class="w-icon">🧮</span>
-            <span class="w-title">BENEFIT_SIM</span>
-          </div>
-          <div class="calc-body-v8" style="padding:1.25rem;">
-            <input type="number" id="calcFuel" value="40" class="hud-input-v8"
-              style="width:100%; margin-bottom:0.5rem;">
-            <div class="calc-res">
-              <span id="resAmount" class="res-value">+0W</span>
+          <div class="filter-group">
+            <label class="text-secondary mb-1">자동 갱신</label>
+            <div class="refresh-wrap">
+              <select class="input-select">
+                <option>120초</option>
+              </select>
             </div>
           </div>
-        </section>
+        </div>
+        <div class="filter-actions mt-3">
+          <button class="btn btn-teal px-5" id="refreshBtn">새로고침</button>
+          <label class="checkbox-label">
+            <input type="checkbox" checked class="input-check">
+            <span class="check-custom">✅</span> 실시간 자동 새로고침
+          </label>
+        </div>
+      </div>
 
-        <section class="widget forum-widget">
-          <div class="widget-header">
-            <span class="w-icon">📜</span>
-            <span class="w-title">INTEL_FEED</span>
+      <!-- Station Info & History Grid -->
+      <div class="layout-grid-2 mt-4">
+        <!-- Station Box -->
+        <div class="panel station-panel relative overflow-hidden">
+          <p class="text-secondary label-text">내 주변 최저가</p>
+          <h2 class="station-name mt-2" id="minStationName">지에스칼텍스(주) 대청주유소</h2>
+          <div class="station-price mt-2" id="minStationPrice">1,777원/L</div>
+          <p class="text-tertiary mt-2">2.54km · 주소 정보 없음</p>
+        </div>
+
+        <!-- History Box -->
+        <div class="panel history-panel">
+          <p class="text-secondary label-text">3일 전 대비</p>
+          <p class="text-primary mt-2">현재(2026-03-10): 1,906.95원/L</p>
+          <p class="text-primary mt-1">3일 전(2026-03-07): 1,889.4원/L</p>
+
+          <div class="red-badge mt-3">
+            +17.55원 (0.93%)
           </div>
-          <div id="forumList" class="forum-scroller" style="padding:1rem;"></div>
-        </section>
-      </aside>
+
+          <div class="history-list mt-4">
+            <div class="hist-row">
+              <span class="hist-date">2026-03-09 → 2026-03-10</span>
+              <span class="hist-val">+4.28원</span>
+            </div>
+            <div class="hist-row">
+              <span class="hist-date">2026-03-08 → 2026-03-09</span>
+              <span class="hist-val">+7.35원</span>
+            </div>
+            <div class="hist-row">
+              <span class="hist-date">2026-03-07 → 2026-03-08</span>
+              <span class="hist-val">+5.92원</span>
+            </div>
+            <div class="hist-row">
+              <span class="hist-date">2026-03-06 → 2026-03-07</span>
+              <span class="hist-val">+17.58원</span>
+            </div>
+            <div class="hist-row">
+              <span class="hist-date">2026-03-05 → 2026-03-06</span>
+              <span class="hist-val">+37.54원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Smart Solution -->
+      <div class="panel smart-panel mt-4">
+        <div class="flex-between">
+          <p class="text-secondary label-text">스마트 최적 주유 솔루션</p>
+          <button class="btn btn-teal btn-small">거리+연비 반영</button>
+        </div>
+
+        <div class="smart-inputs mt-3">
+          <div class="input-col">
+            <label class="text-secondary mb-1">예상 주유량(L)</label>
+            <input type="number" class="input-field" value="40">
+          </div>
+          <div class="input-col">
+            <label class="text-secondary mb-1">내 연비(km/L)</label>
+            <input type="number" class="input-field" value="12">
+          </div>
+        </div>
+
+        <h3 class="station-name mt-4" id="smartStationName">지에스칼텍스(주) 대청주유소</h3>
+        <div class="smart-result text-teal text-xl font-bold mt-1">실질 +4,445원 예상</div>
+        <p class="text-tertiary mt-2">전국평균 1,906.95원/L 대비 · 40L 주유 · 연비 12km/L 가정</p>
+
+        <div class="progress-bar mt-3">
+          <div class="progress-fill" style="width: 80%;"></div>
+        </div>
+      </div>
+
+      <!-- Summary & Alert Grid -->
+      <div class="layout-grid-2 mt-4">
+        <div class="panel">
+          <p class="text-secondary label-text">오늘의 절약 요약</p>
+          <h3 class="text-orange text-lg font-bold mt-2">오늘 예상 절약 3,120원</h3>
+          <p class="text-primary mt-2 leading-relaxed">지에스칼텍스(주) 대청주유소 기준 1,777원/L · 2.54km · 3일 대비 +17.55원 (0.93%)</p>
+          <button class="btn btn-teal w-full mt-4 font-bold">절약 결과 공유하기</button>
+          <p class="text-secondary text-sm mt-3">공유 대기 중</p>
+        </div>
+
+        <div class="panel">
+          <p class="text-secondary label-text">급등 감시</p>
+          <div class="dark-red-badge mt-2 inline-block">급등 경보 +56.8원</div>
+          <p class="text-primary mt-3 leading-relaxed">2026-03-04→2026-03-05 구간이 최근 최대 상승입니다. 지금 비교 구매가 유리해요.</p>
+          <p class="text-secondary mt-2">커뮤니티 참여지수 44점 · 신고 0건 · 공유 0회</p>
+        </div>
+      </div>
+
+      <!-- List Title -->
+      <div class="flex-between mt-6 mb-2 px-1">
+        <p class="text-secondary">반경 내 가격순 목록</p>
+        <p class="text-secondary"><span id="listCount">4</span>개</p>
+      </div>
+
+      <!-- Station List -->
+      <div id="fullStationList">
+        <!-- List Items injected via JS -->
+      </div>
+
     </main>
-
-    <div id="mapTab" class="tab-view inactive"
-      style="position:fixed; inset:0; z-index:1000; background:var(--bg-deep);">
-      <button id="closeMap" class="close-btn">BACK_TO__HUD</button>
-      <div id="fullMap" style="width:100%; height:100%;"></div>
-    </div>
-
-    <nav class="system-nav">
-      <button class="nav-item active" data-tab="home">HUD_C</button>
-      <button class="nav-item" id="openMap">MAP_I</button>
-      <button class="nav-item" data-tab="sys">LOG</button>
-    </nav>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js"></script>
 </body>
 
 </html>
