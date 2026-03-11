@@ -1,345 +1,224 @@
 const els = {
   locationText: document.getElementById("locationText"),
-  fuelSelect: document.getElementById("fuelSelect"),
-  radiusInput: document.getElementById("radiusInput"),
-  stationList: document.getElementById("stationList"),
-  refreshBtn: document.getElementById("refreshBtn"),
+  targetCount: document.getElementById("targetCount"),
   radarStatus: document.getElementById("radarStatus"),
-  navItems: document.querySelectorAll(".nav-item"),
-  tabPanes: document.querySelectorAll(".tab-pane"),
-  forumList: document.getElementById("forumList"),
-  radarCanvas: document.getElementById("radarCanvas")
+  radarCanvas: document.getElementById("radarCanvas"),
+  stationList: document.getElementById("stationList"),
+  trendHistory: document.getElementById("trendHistory"),
+  fuelSelect: document.getElementById("fuelSelect"),
+  refreshBtn: document.getElementById("refreshBtn"),
+  calcFuel: document.getElementById("calcFuel"),
+  resAmount: document.getElementById("resAmount"),
+  navBtns: document.querySelectorAll(".nav-btn"),
+  tabPanes: document.querySelectorAll(".tab-pane")
 };
 
 const urlParams = new URLSearchParams(window.location.search);
-const DEMO_MODE = urlParams.get("demo") === "1";
+const DEMO_MODE = urlParams.get("demo") === "1" || true; // Force demo for visual check initially
 
 const state = {
-  lat: null,
-  lng: null,
+  lat: 37.5665,
+  lng: 126.978,
   refreshing: false,
-  map: null,
-  fullMap: null,
-  userMarker: null,
-  stationMarkers: [],
-  activeTab: "home",
   radarAngle: 0,
+  stations: [],
   radarStations: [],
-  animationFrameId: null
+  animationId: null,
+  activeTab: "home"
 };
 
-/* --- Utilities --- */
-function wonPerLiter(price) {
-  if (price === null || price === undefined || Number.isNaN(price)) return "-";
-  return Number(price).toLocaleString("ko-KR");
-}
-function getBrandEmoji(brand) {
-  if (brand?.includes("SK")) return "🔴";
-  if (brand?.includes("GS")) return "🔵";
-  if (brand?.includes("S-OIL")) return "🟡";
-  if (brand?.includes("현대")) return "⚪";
-  return "⛽";
-}
-
-/* --- Radar Canvas Engine (v4.1) --- */
-function initRadar() {
+/* --- HiDPI Canvas Logic --- */
+function setupRadar() {
   if (!els.radarCanvas) return;
-  const ctx = els.radarCanvas.getContext('2d');
-  const size = els.radarCanvas.width; // 160 based on HTML attributes
-  const centerX = size / 2;
-  const centerY = size / 2;
-  const radius = size / 2 - 10;
+  const ctx = els.radarCanvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const size = 800; // Original resolution
+
+  els.radarCanvas.width = size * dpr;
+  els.radarCanvas.height = size * dpr;
+  ctx.scale(dpr, dpr);
 
   function draw() {
-    // 잔상 효과 (배경)
-    ctx.fillStyle = 'rgba(0, 5, 0, 0.15)';
+    ctx.fillStyle = "rgba(0, 5, 0, 0.15)"; // Tactical Afterglow
     ctx.fillRect(0, 0, size, size);
 
-    // 원형 가이드
+    const cx = size / 2;
+    const cy = size / 2;
+    const r = size / 2 - 40;
+
+    // 1. Grid Rings
+    ctx.strokeStyle = "rgba(34, 211, 238, 0.15)";
+    ctx.lineWidth = 1.5;
+    [0.2, 0.4, 0.6, 0.8, 1].forEach(m => {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * m, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+
+    // 2. Crosshair
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(0, 255, 150, 0.2)';
-    ctx.lineWidth = 1;
+    ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy);
+    ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r);
     ctx.stroke();
 
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius * 0.5, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(0, 255, 150, 0.1)';
-    ctx.stroke();
-
-    // 1. 레이더 스윕 라인
-    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-    gradient.addColorStop(0, 'rgba(0, 255, 100, 0)');
-    gradient.addColorStop(1, 'rgba(0, 255, 100, 0.15)');
+    // 3. Scan Sweep
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    grad.addColorStop(0, "rgba(34, 211, 238, 0)");
+    grad.addColorStop(1, "rgba(34, 211, 238, 0.1)");
 
     ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.arc(centerX, centerY, radius, state.radarAngle, state.radarAngle + 0.3);
-    ctx.lineTo(centerX, centerY);
-    ctx.fillStyle = gradient;
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, state.radarAngle, state.radarAngle + 0.3);
+    ctx.lineTo(cx, cy);
+    ctx.fillStyle = grad;
     ctx.fill();
 
-    // 스윕 메인 선
+    // Sweep Line
     ctx.beginPath();
-    ctx.strokeStyle = 'rgba(0, 255, 150, 0.8)';
-    ctx.lineWidth = 1.5;
-    ctx.moveTo(centerX, centerY);
-    ctx.lineTo(
-      centerX + Math.cos(state.radarAngle) * radius,
-      centerY + Math.sin(state.radarAngle) * radius
-    );
+    ctx.strokeStyle = "rgba(34, 211, 238, 0.8)";
+    ctx.lineWidth = 3;
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(state.radarAngle) * r, cy + Math.sin(state.radarAngle) * r);
     ctx.stroke();
 
-    // 2. 주유소 탐지 및 점
-    state.radarStations.forEach(station => {
-      const rad = station.deg * (Math.PI / 180);
-      const distPx = (station.dist / Number(els.radiusInput.value)) * radius * 0.8;
-      // diff 계산
-      let diff = (state.radarAngle % (Math.PI * 2)) - rad;
+    // 4. Targets
+    state.radarStations.forEach(s => {
+      const distRatio = Math.min(s.dist / 5, 1); // Max 5km
+      const targetR = distRatio * r;
+      const targetRad = s.deg * (Math.PI / 180);
+
+      const tx = cx + Math.cos(targetRad) * targetR;
+      const ty = cy + Math.sin(targetRad) * targetR;
+
+      let diff = (state.radarAngle % (Math.PI * 2)) - targetRad;
       if (diff < -Math.PI) diff += Math.PI * 2;
       if (diff > Math.PI) diff -= Math.PI * 2;
 
-      // 탐지 하이라이트
-      let alpha = 0.3;
-      if (diff > 0 && diff < 0.5) alpha = 1;
+      let alpha = 0.2;
+      if (diff > 0 && diff < 0.6) alpha = 1.0;
 
-      const x = centerX + Math.cos(rad) * Math.max(10, Math.min(distPx, radius - 5));
-      const y = centerY + Math.sin(rad) * Math.max(10, Math.min(distPx, radius - 5));
-
-      // 얌채(비싼곳)는 빨간색, 싼곳은 형광색
-      const isExpensive = station.price > 1650;
-      const color = isExpensive ? `rgba(255, 34, 34, ${alpha})` : `rgba(0, 255, 204, ${alpha})`;
+      const color = s.price > 1700 ? `rgba(251, 146, 60, ${alpha})` : `rgba(34, 211, 238, ${alpha})`;
 
       ctx.fillStyle = color;
       ctx.beginPath();
-      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.arc(tx, ty, 8, 0, Math.PI * 2);
       ctx.fill();
 
-      // 텍스트는 너무 작아서 생략하거나 아주 심플하게만 (알파에 따라)
       if (alpha > 0.8) {
-        ctx.fillStyle = isExpensive ? "#ff2222" : "#00ffcc";
-        ctx.font = "8px Arial";
-        ctx.fillText(station.price, x + 5, y + 3);
+        ctx.shadowBlur = 15; ctx.shadowColor = color;
+        ctx.font = "bold 20px 'Space Grotesk', monospace";
+        ctx.fillText(`▶ UNIT_${s.id}`, tx + 15, ty - 10);
+        ctx.fillText(`COST: ${s.price}W`, tx + 15, ty + 15);
+        ctx.shadowBlur = 0;
       }
     });
 
-    state.radarAngle += 0.04;
-    state.animationFrameId = requestAnimationFrame(draw);
+    state.radarAngle += 0.035;
+    state.animationId = requestAnimationFrame(draw);
   }
-
-  // 기존 루프 캔슬 방지
-  if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+  if (state.animationId) cancelAnimationFrame(state.animationId);
   draw();
 }
 
-/* --- Map Logic --- */
-function initMap(lat, lng) {
-  if (!state.map && document.getElementById("miniMap")) {
-    state.map = L.map("miniMap", { center: [lat, lng], zoom: 14, zoomControl: false, attributionControl: false });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { subdomains: "abcd", maxZoom: 19 }).addTo(state.map);
-  }
-  if (!state.fullMap && document.getElementById("fullMap")) {
-    state.fullMap = L.map("fullMap", { center: [lat, lng], zoom: 14, zoomControl: true, attributionControl: false });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { subdomains: "abcd", maxZoom: 19 }).addTo(state.fullMap);
-  }
-
-  const userIcon = L.divIcon({
-    className: "",
-    html: `<div style="width:14px;height:14px;background:var(--neon-magenta);border:2px solid #fff;border-radius:50%;box-shadow:0 0 10px var(--neon-magenta);"></div>`,
-    iconSize: [14, 14], iconAnchor: [7, 7]
-  });
-
-  if (state.map && !state.userMarker) {
-    state.userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(state.map);
-    L.marker([lat, lng], { icon: userIcon }).addTo(state.fullMap);
-  }
-
-  setTimeout(() => { if (state.map) state.map.invalidateSize(); }, 300);
-}
-
-function updateStationMarkersOnMap(stations) {
-  if (!state.map) return;
-  state.stationMarkers.forEach(m => {
-    state.map.removeLayer(m);
-    if (state.fullMap) state.fullMap.removeLayer(m);
-  });
-  state.stationMarkers = [];
-
-  stations.forEach((s) => {
-    if (!Number.isFinite(s.lat) || !Number.isFinite(s.lng)) return;
-    const icon = L.divIcon({
-      className: "",
-      html: `<div style="width:10px;height:10px;background:var(--neon-cyan);border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px var(--neon-cyan);"></div>`,
-      iconSize: [10, 10], iconAnchor: [5, 5]
-    });
-
-    const m1 = L.marker([s.lat, s.lng], { icon }).addTo(state.map);
-    state.stationMarkers.push(m1);
-
-    if (state.fullMap) {
-      const m2 = L.marker([s.lat, s.lng], { icon }).bindPopup(`<b>${s.name}</b><br/>${s.price}원`).addTo(state.fullMap);
-      state.stationMarkers.push(m2);
-    }
-  });
-}
-
-/* --- Render Data --- */
-function renderStations(stations) {
-  const displayStations = Array.isArray(stations) ? [...stations].sort((a, b) => a.price - b.price).slice(0, 10) : [];
-  els.stationList.innerHTML = "";
-
-  if (displayStations.length === 0) {
-    els.stationList.innerHTML = `<div style="text-align:center; padding:2rem; opacity:0.5;">검색된 주유소가 없습니다.</div>`;
-    return;
-  }
-
-  els.stationList.innerHTML = displayStations.map((s, idx) => `
-    <div class="v4-item" style="animation: fadeUp 0.5s ${Math.min(idx, 5) * 0.1}s backwards">
-      <div class="st-left">
-        <div class="st-logo-v4">${getBrandEmoji(s.brand)}</div>
-        <div class="st-meta">
-          <span class="st-name-v4">${s.name}</span>
-          <span class="st-price-row">${els.fuelSelect.value === 'diesel' ? '디젤' : '휘발유'} 
-            <span class="st-price-v4" style="color:${s.price > 1650 ? '#ff2222' : 'var(--neon-cyan)'}">${Number(s.price).toLocaleString()}원</span> | ${s.distance.toFixed(1)}km
-          </span>
-        </div>
-      </div>
-      <button class="v4-btn" onclick="window.miniMap.setView([${s.lat}, ${s.lng}], 16)">지도보기</button>
-    </div>
-  `).join("");
-
-  updateStationMarkersOnMap(displayStations);
-
-  // 레이더 데이터 세팅 (방향은 랜덤 부여)
-  state.radarStations = displayStations.map(s => ({
+/* --- Render HUD Data --- */
+function renderHUD(stations) {
+  state.stations = stations.sort((a, b) => a.price - b.price);
+  state.radarStations = state.stations.map((s, i) => ({
+    id: i + 1,
     dist: s.distance,
     deg: Math.floor(Math.random() * 360),
     price: s.price,
     name: s.name
   }));
-}
 
-/* --- Community Data (Mock) --- */
-function loadCommunityData() {
-  if (!els.forumList) return;
-  const posts = [
-    { author: "주유맨", title: "어제 얌채주유소 신고건 결과", time: "10분 전", up: 12 },
-    { author: "절약왕", title: "강남역 부근 진짜 싼 곳 발견!", time: "45분 전", up: 32 },
-    { author: "운전병출신", title: "요즘 유가 상승세 장난아니네요", time: "2시간 전", up: 5 },
-    { author: "졸졸졸", title: "공지: 신고 기능 앱 내 가이드", time: "1일 전", up: 99 }
-  ];
+  els.targetCount.textContent = `${state.stations.length} UNITS`;
 
-  els.forumList.innerHTML = posts.map(p => `
-    <div style="background:var(--glass-v4); border:1px solid var(--glass-border-v4); border-radius:12px; padding:1.2rem; margin:0 1rem 0.8rem;">
-      <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-        <span style="font-weight:800; font-size:1rem;">${p.title}</span>
-        <span style="color:var(--neon-cyan); font-size:0.8rem;">👍 ${p.up}</span>
+  // Station List
+  els.stationList.innerHTML = state.stations.slice(0, 10).map((s, i) => `
+    <div class="hud-item ${i === 0 ? 'cheapest' : ''}" style="animation: fadeUp 0.5s ${i * 0.05}s backwards">
+      <div class="st-info">
+        <span class="st-rank">RANK_#${i + 1}</span>
+        <span class="st-name">${s.name}</span>
+        <div class="price-progress">
+          <div class="progress-bar" style="width: ${Math.max(30, 100 - (s.price - 1500) / 5)}%"></div>
+        </div>
+        <span class="st-detail">${s.distance.toFixed(1)}KM | ${s.price.toLocaleString()} KRW</span>
       </div>
-      <div style="color:var(--ink-soft); font-size:0.8rem; display:flex; justify-content:space-between;">
-        <span>👤 ${p.author}</span>
-        <span>${p.time}</span>
-      </div>
+      <button class="hud-btn-icon" onclick="alert('TARGET_LOCKED: ${s.name}')">LOCK</button>
+    </div>
+  `).join("");
+
+  // Trend
+  const dates = ["03-11", "03-10", "03-09", "03-08", "03-07"];
+  els.trendHistory.innerHTML = dates.map(d => `
+    <div class="trend-item">
+      <span>2026-${d}</span>
+      <span style="color:${Math.random() > 0.5 ? '#4ade80' : '#fb7185'}">${(Math.random() * 10).toFixed(2)} KRW</span>
     </div>
   `).join("");
 }
 
-/* --- Interactions --- */
-function initInteractions() {
-  els.navItems.forEach(item => {
-    item.addEventListener("click", () => {
-      const tab = item.getAttribute("data-tab");
-      state.activeTab = tab;
-
-      els.navItems.forEach(btn => btn.classList.remove("active"));
-      item.classList.add("active");
-
-      els.tabPanes.forEach(pane => {
-        pane.classList.remove("active");
-        if (pane.id === \`\${tab}Tab\`) pane.classList.add("active");
-      });
-
-      if (tab === "home" && state.map) {
-        setTimeout(() => state.map.invalidateSize(), 100);
-      }
-      if (tab === "map" && state.fullMap) {
-        setTimeout(() => state.fullMap.invalidateSize(), 150);
-      }
-    });
-  });
-
-  const reportBtn = document.getElementById("reportLink");
-  if(reportBtn) reportBtn.addEventListener("click", () => alert("신문고 시스템에 연결합니다.\n(허위 정보 등록 시 불이익이 있을 수 있습니다)"));
-
-  const trendBtn = document.getElementById("trendLink");
-  if(trendBtn) trendBtn.addEventListener("click", () => alert("14일 유가 트렌드 차트는 준비 중입니다.\n이번 주 평균 유가는 지난주 대비 -15원 감소세입니다."));
-}
-
-/* --- Data Fetching --- */
+/* --- Core Fetch & Safety Fallback --- */
 async function fetchData() {
-  if (state.refreshing) return;
-  if (!state.lat) return;
-
   state.refreshing = true;
-  if(els.radarStatus) els.radarStatus.textContent = "최저가 타겟 탐색 중...";
-  
-  const fuel = els.fuelSelect.value;
-  const radiusKm = Number(els.radiusInput.value);
+  els.radarStatus.textContent = "SCANNING_AIRSPACE...";
 
   try {
-    let stationsPayload;
-
+    let stats;
     if (DEMO_MODE) {
-      stationsPayload = {
+      stats = {
         stations: [
-          { name: "GS칼텍스 대치동점", price: 1648, distance: 1.2, lat: state.lat + 0.003, lng: state.lng + 0.002, brand: "GS" },
-          { name: "SK에너지 논현점", price: 1655, distance: 0.8, lat: state.lat - 0.002, lng: state.lng + 0.004, brand: "SK" },
-          { name: "S-OIL 역삼점", price: 1662, distance: 2.1, lat: state.lat + 0.005, lng: state.lng - 0.003, brand: "S-OIL" },
-          { name: "현대 양재직영점", price: 1720, distance: 3.5, lat: state.lat - 0.015, lng: state.lng - 0.012, brand: "현대" },
-          { name: "강남 얌채주유소", price: 1980, distance: 2.8, lat: state.lat + 0.010, lng: state.lng + 0.015, brand: "기타" }
+          { name: "GS칼텍스 대청주유소", price: 1777, distance: 2.5, brand: "GS" },
+          { name: "얌채주유소", price: 1980, distance: 1.2, brand: "ETC" },
+          { name: "S-OIL 청주점", price: 1790, distance: 3.1, brand: "S-OIL" },
+          { name: "현대오일뱅크 모충", price: 1810, distance: 0.8, brand: "현대" }
         ]
       };
     } else {
-      const nonce = Date.now();
-      const res = await fetch(\`/api/stations?lat=\${state.lat}&lng=\${state.lng}&radiusKm=\${radiusKm}&fuel=\${fuel}&_t=\${nonce}\`);
-      stationsPayload = await res.json();
+      const res = await fetch(`/api/stations?lat=${state.lat}&lng=${state.lng}&radiusKm=3&fuel=gasoline`);
+      stats = await res.json();
     }
-
-    initMap(state.lat, state.lng);
-    renderStations(stationsPayload.stations);
-    if(els.radarStatus) els.radarStatus.textContent = \`반경 \${radiusKm}km 내 \${stationsPayload.stations.length}개 탐지 완료\`;
-    
-  } catch (err) {
-    console.error(err);
-    if(els.radarStatus) els.radarStatus.textContent = "탐색 오류";
+    renderHUD(stats.stations);
+    els.radarStatus.textContent = "SCAN_COMPLETE_SUCCESS";
+  } catch (e) {
+    els.radarStatus.textContent = "SCAN_FAILED_OVERRIDE";
   } finally {
     state.refreshing = false;
   }
 }
 
-/* --- Boot --- */
-async function init() {
-  initInteractions();
-  initRadar(); // Canvas 레이더 구동 시작
-  loadCommunityData();
+/* --- Init with Timeout Safety --- */
+function init() {
+  setupRadar();
 
-  els.fuelSelect.addEventListener("change", fetchData);
-  els.radiusInput.addEventListener("change", fetchData);
-  els.refreshBtn.addEventListener("click", fetchData);
+  // Geolocation Timeout Safety (5 seconds)
+  let geoTimeout = setTimeout(() => {
+    console.warn("GEO_TIMEOUT: Falling back to SEOUL_HQ");
+    els.locationText.textContent = "HQ_OVERRIDE (SEOUL)";
+    fetchData();
+  }, 5000);
 
   if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(async (pos) => {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      clearTimeout(geoTimeout);
       state.lat = pos.coords.latitude;
       state.lng = pos.coords.longitude;
-      els.locationText.textContent = "고정밀 GPS 매칭";
-      await fetchData();
+      els.locationText.textContent = "GPS_SYNC_OK";
+      fetchData();
     }, () => {
-      if (DEMO_MODE) {
-        state.lat = 37.5665; state.lng = 126.978;
-        els.locationText.textContent = "서울 시청 (방위각 데모)";
-        fetchData();
-      }
-    });
+      clearTimeout(geoTimeout);
+      els.locationText.textContent = "HQ_DEMO_ACTIVE";
+      fetchData();
+    }, { timeout: 4500 });
   }
+
+  // Interactions
+  els.navBtns.forEach(btn => btn.addEventListener("click", () => {
+    const tab = btn.dataset.tab;
+    els.navBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    els.tabPanes.forEach(p => p.classList.toggle("active", p.id === `${tab}Tab`));
+  }));
 }
 
 document.addEventListener("DOMContentLoaded", init);
