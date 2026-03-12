@@ -201,9 +201,126 @@ function initEvents() {
   els.navItems.forEach(nav => nav.addEventListener("click", () => {
     els.navItems.forEach(n => n.classList.remove("active"));
     nav.classList.add("active");
-    // Simple tab logic: if data-tab="sys", we could show/hide widgets, 
-    // but for now, we just handle the home/map distinction.
   }));
+
+  // --- Modal Logic (Tactical V1.1) ---
+  const shinmungoBtn = document.getElementById('shinmungoBtn');
+  const communityBtn = document.getElementById('shareCommunityBtn');
+
+  const shinmungoModal = document.getElementById('shinmungoModal');
+  const communityModal = document.getElementById('communityModal');
+
+  const closeShinmungoBtn = document.getElementById('closeShinmungoBtn');
+  const closeCommunityBtn = document.getElementById('closeCommunityBtn');
+
+  if (shinmungoBtn) {
+    shinmungoBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      shinmungoModal.classList.remove('inactive');
+    });
+  }
+
+  if (communityBtn) {
+    communityBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      communityModal.classList.remove('inactive');
+    });
+  }
+
+  if (closeShinmungoBtn) {
+    closeShinmungoBtn.addEventListener('click', () => {
+      shinmungoModal.classList.add('inactive');
+    });
+  }
+
+  if (closeCommunityBtn) {
+    closeCommunityBtn.addEventListener('click', () => {
+      communityModal.classList.add('inactive');
+    });
+  }
+
+  // Close when clicking outside
+  window.addEventListener('click', (e) => {
+    if (e.target === shinmungoModal) shinmungoModal.classList.add('inactive');
+    if (e.target === communityModal) communityModal.classList.add('inactive');
+  });
+
+  // Form Submissions
+  const shinmungoForm = document.getElementById('shinmungoForm');
+  if (shinmungoForm) {
+    shinmungoForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = shinmungoForm.querySelector('button');
+      const originalText = btn.textContent;
+      btn.textContent = 'TRANSMITTING...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+        shinmungoModal.classList.add('inactive');
+        showToast('DATA_SENT // 신문고 접수 완료');
+        shinmungoForm.reset();
+      }, 1000);
+    });
+  }
+
+  const communityForm = document.getElementById('communityForm');
+  if (communityForm) {
+    communityForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = communityForm.querySelector('button');
+      const originalText = btn.textContent;
+      btn.textContent = 'BROADCASTING...';
+      btn.disabled = true;
+
+      const comment = document.getElementById('shareComment').value || '오늘 대박 절약 꿀팁 공유합니다!';
+
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+        communityModal.classList.add('inactive');
+        showToast('SYNC_COMPLETE // 커뮤니티 전송 완료');
+        communityForm.reset();
+
+        // Add to INTEL_FEED widget (v1.1 specific)
+        addForumFeed('COMMANDER_X', comment);
+      }, 1000);
+    });
+  }
+}
+
+// Toast System
+function showToast(message) {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  setTimeout(() => { toast.classList.add('show'); }, 10);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => { toast.remove(); }, 300);
+  }, 3000);
+}
+
+// Visual simulation for feed (v1.1 specific)
+function addForumFeed(user, comment) {
+  const container = document.getElementById('forumList');
+  if (!container) return;
+
+  const div = document.createElement('div');
+  div.className = 'forum-item fade-in-up';
+  div.style.padding = '0.75rem';
+  div.style.borderBottom = '1px solid var(--glass-border)';
+  div.innerHTML = `
+    <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--neon-orange); font-weight:900;">${user} [NEW]</div>
+    <div style="font-size:0.85rem; color:#f1f5f9; margin-top:0.25rem;">${comment}</div>
+  `;
+  container.prepend(div);
 }
 
 let map;

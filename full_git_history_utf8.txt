@@ -1,0 +1,23 @@
+﻿0cb4a24 | 2026-03-12 09:42:42 | feat: implement modals for report and community sharing with E2E tests
+0529e74 | 2026-03-12 00:54:24 | fix: reactivate radar animation and bind alert actions
+5af7f44 | 2026-03-12 00:42:27 | refactor: total UI rollback to original dark navy and mint dashboard
+63088ec | 2026-03-12 00:18:35 | feat: v1.2 Premium Tactical UI/UX Upgrade (SkillsMP: glassmorphism, ui-ux-audit applied)
+a1aa58f | 2026-03-11 23:42:01 | fix: emergency patch for black screen issue (Restore tab logic, CSS visibility, standard CSS fix)
+208d86e | 2026-03-11 23:31:08 | feat: v1.1 Performance Optimization (BKIT Code Diet, HW Acceleration, Resource Preload)
+80448cb | 2026-03-11 23:21:22 | feat: v1.0 Official Release (Premium Emojis, Glassmorphism Bottom Nav, Refined Branding)
+e78bad0 | 2026-03-11 23:04:27 | feat: v8.0 Ultra-Premium HUD Reconstruction (Full Grid, High-Density Tactical UI, Pass Skill)
+cd2242c | 2026-03-11 22:51:09 | feat: v7.0 autonomous branding (pass skill, logo, high-vis fonts, integrated report)
+1bb8b11 | 2026-03-11 22:42:53 | fix: remove reward mention and finalize v6.1 autonomous deployment
+e262369 | 2026-03-11 22:37:35 | fix: v6.1 final stability patch (no errors, all systems go)
+a3c86fb | 2026-03-11 22:11:18 | fix: v6.0 final polish (radius filter, search restoration, accessibility)
+90f5c51 | 2026-03-11 21:55:34 | feat: v6.0 robustness fix (radar noise, filters, community write)
+9bd2225 | 2026-03-11 21:40:20 | feat: ultimate tactical HUD rebuild (v5.0)
+3193d71 | 2026-03-11 21:24:50 | fix: restore missing head/script tags in index.html (v4.1 final)
+0a5eb5f | 2026-03-11 21:17:08 | feat: integrate canvas-based radar (v4.1)
+263a6b2 | 2026-03-11 21:03:12 | feat: pixel-perfect UI replication & feature expansion (v4.0)
+ab8345f | 2026-03-11 20:45:53 | style: ultra-premium mobile-first UI overhaul (v3.0)
+84c70aa | 2026-03-11 20:34:17 | feat: rebranding to 湲곕쫫?곕씪 議몄「議?& premium UI/UX overhaul with Bento Grid & Neon design
+de808aa | 2026-03-11 19:39:24 | feat: rename service to '湲곕쫫?곕씪 議몄「議? & fix Opinet API coordinate system
+bad419c | 2026-03-11 19:19:36 | fix: use coord=3 (WGS84) for Opinet API request to improve reliability on Vercel
+17b7ec8 | 2026-03-11 18:50:44 | fix: Vercel deployment runtime configuration
+0b8c4cc | 2026-03-11 18:40:44 | feat: Fuel Radar - ?ㅼ떆媛??꾩튂湲곕컲 ?좉??먯깋 ??(誘몃땲留? ?쒓??? TOP5 紐⑸줉, KATEC 醫뚰몴蹂??

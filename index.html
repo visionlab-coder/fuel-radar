@@ -108,7 +108,7 @@
             <p class="r-desc" style="margin:0 0 1rem; font-size:0.85rem; color:#94a3b8;">이상 가격 발견 시 즉시 제보 바랍니다.</p>
             <div class="report-btns" style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
               <button id="shinmungoBtn" class="r-btn shin">📜 신문고</button>
-              <button id="writePostBtn" class="r-btn detail">📝 상세 제보</button>
+              <button id="shareCommunityBtn" class="r-btn detail">📢 커뮤니티</button>
             </div>
           </div>
         </section>
@@ -148,6 +148,69 @@
       <button class="nav-item" id="openMap">MAP_I</button>
       <button class="nav-item" data-tab="sys">LOG</button>
     </nav>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Shinmungo Modal (Tactical UI matched) -->
+  <div id="shinmungoModal" class="modal-overlay inactive">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3 class="w-title" style="color:var(--neon-orange); font-size:1rem;">🚨 SHINMUNGO_REPORT</h3>
+        <button class="modal-close btn-close" id="closeShinmungoBtn">&times;</button>
+      </div>
+      <div class="modal-body mt-4">
+        <form id="shinmungoForm">
+          <div class="input-group mb-4">
+            <label class="w-title block mb-2">TARGET_STATION</label>
+            <input type="text" id="reportStationName" class="input-field w-full" value="지에스칼텍스(주) 대청주유소" readonly>
+          </div>
+          <div class="input-group mb-4">
+            <label class="w-title block mb-2">REPORT_REASON</label>
+            <div class="radio-group" style="color:#f1f5f9; font-size:0.85em;">
+              <label><input type="radio" name="reportReason" value="price_mismatch" checked> 표시판 가격과 다름</label>
+              <label><input type="radio" name="reportReason" value="fake_oil"> 가짜 석유 의심</label>
+              <label><input type="radio" name="reportReason" value="other"> 기타 사항</label>
+            </div>
+          </div>
+          <div class="input-group mb-4">
+            <label class="w-title block mb-2">DETAILS (OPTIONAL)</label>
+            <textarea id="reportDetails" class="input-field w-full h-24"
+              placeholder="발견하신 문제점을 자세히 기입 바랍니다."></textarea>
+          </div>
+          <button type="submit" class="r-btn detail w-full" style="width:100%;">TRANSMIT_DATA</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Community Share Modal -->
+  <div id="communityModal" class="modal-overlay inactive">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3 class="w-title" style="color:var(--neon-cyan); font-size:1rem;">📢 COMMUNITY_SHARE</h3>
+        <button class="modal-close btn-close" id="closeCommunityBtn">&times;</button>
+      </div>
+      <div class="modal-body mt-4">
+        <div class="share-preview bg-dark p-4 rounded-lg border border-teal"
+          style="background:rgba(0,0,0,0.4); padding:1rem; border:1px solid var(--neon-cyan); border-radius:8px;">
+          <p class="text-tertiary text-sm mb-1">[LOCAL_MIN_PRICE]</p>
+          <h4 class="st-brand-v8" style="font-size:1.1rem; margin-bottom:0.25rem;" id="shareStationName">지에스칼텍스(주) 대청주유소
+          </h4>
+          <p class="st-price-v8" style="color:var(--neon-cyan); font-size:1.2rem;" id="shareStationPrice">1,777원/L</p>
+          <p class="w-title mt-2" style="font-size:0.7em;">ESTIMATED_SAVE: +3,120 KRW</p>
+        </div>
+        <form id="communityForm" class="mt-4">
+          <div class="input-group mb-4">
+            <label class="w-title block mb-2">ADDITIONAL_COMMENT</label>
+            <input type="text" id="shareComment" class="input-field w-full" placeholder="ex. 대기줄 기네요 참고하세요~">
+          </div>
+          <button type="submit" class="r-btn detail w-full"
+            style="background:var(--neon-cyan); width:100%;">BROADCAST_TO_FEED</button>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
