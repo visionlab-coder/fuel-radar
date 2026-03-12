@@ -11,5 +11,20 @@
   },
   "engines": {
     "node": "20.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/visionlab-coder/fuel-radar.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/visionlab-coder/fuel-radar/issues"
+  },
+  "homepage": "https://github.com/visionlab-coder/fuel-radar#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
   }
 }

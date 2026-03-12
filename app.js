@@ -103,20 +103,133 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Button Event Listeners
+  // Modal Event Listeners
   const shinmungoBtn = document.getElementById('shinmungoBtn');
+  const communityBtn = document.getElementById('shareCommunityBtn');
+
+  const shinmungoModal = document.getElementById('shinmungoModal');
+  const communityModal = document.getElementById('communityModal');
+
+  const closeShinmungoBtn = document.getElementById('closeShinmungoBtn');
+  const closeCommunityBtn = document.getElementById('closeCommunityBtn');
+
+  // Open modals
   if (shinmungoBtn) {
     shinmungoBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      alert("🚨 신문고 제보 페이지로 이동합니다.");
+      shinmungoModal.classList.remove('hidden');
     });
   }
 
-  const shareCommunityBtn = document.getElementById('shareCommunityBtn');
-  if (shareCommunityBtn) {
-    shareCommunityBtn.addEventListener('click', (e) => {
+  if (communityBtn) {
+    communityBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      alert("📢 커뮤니티에 성공적으로 최저가 주유소를 공유했습니다!");
+      communityModal.classList.remove('hidden');
     });
+  }
+
+  // Close modals
+  if (closeShinmungoBtn) {
+    closeShinmungoBtn.addEventListener('click', () => {
+      shinmungoModal.classList.add('hidden');
+    });
+  }
+
+  if (closeCommunityBtn) {
+    closeCommunityBtn.addEventListener('click', () => {
+      communityModal.classList.add('hidden');
+    });
+  }
+
+  // Close when clicking outside
+  window.addEventListener('click', (e) => {
+    if (e.target === shinmungoModal) shinmungoModal.classList.add('hidden');
+    if (e.target === communityModal) communityModal.classList.add('hidden');
+  });
+
+  // Form Submissions
+  const shinmungoForm = document.getElementById('shinmungoForm');
+  if (shinmungoForm) {
+    shinmungoForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = shinmungoForm.querySelector('button');
+      const originalText = btn.textContent;
+      btn.textContent = '전송 중...';
+      btn.disabled = true;
+
+      // Simulate network request
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+        shinmungoModal.classList.add('hidden');
+        showToast('✅ 신문고 접수가 완료되었습니다. 담당 관청으로 전달됩니다.');
+        shinmungoForm.reset();
+      }, 1000);
+    });
+  }
+
+  const communityForm = document.getElementById('communityForm');
+  if (communityForm) {
+    communityForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = communityForm.querySelector('button');
+      const originalText = btn.textContent;
+      btn.textContent = '등록 중...';
+      btn.disabled = true;
+
+      const comment = document.getElementById('shareComment').value || '오늘 대박 절약 꿀팁 공유합니다!';
+
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+        communityModal.classList.add('hidden');
+        showToast('📢 커뮤니티에 성공적으로 공유되었습니다!');
+        communityForm.reset();
+
+        // Add visual cue in DOM as proof of share
+        addFeedItem('지에스칼텍스(주) 대청주유소', comment);
+      }, 1000);
+    });
+  }
+
+  // Toast System
+  function showToast(message) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    // Trigger reflow & show
+    setTimeout(() => { toast.classList.add('show'); }, 10);
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => { toast.remove(); }, 300);
+    }, 3000);
+  }
+
+  // Visual simulation for feed (adds to UI)
+  function addFeedItem(stationName, comment) {
+    const container = document.getElementById('fullStationList');
+    if (!container) return;
+
+    const div = document.createElement('div');
+    div.className = 'list-item fade-in-up';
+    div.style.borderLeft = '4px solid #fdba74';
+    div.innerHTML = `
+      <div class="list-header">
+        <div style="display:flex; align-items:center;">
+          <span class="text-orange font-bold text-sm mr-2">[커뮤니티 새 피드]</span>
+        </div>
+        <div style="text-align:right;">
+          <h3 class="station-name text-md" style="color:#fdba74;">" ${comment} "</h3>
+          <p class="text-tertiary mt-1">방금 전 · 내 제보 (${stationName})</p>
+        </div>
+      </div>
+    `;
+    container.prepend(div);
   }
 });
